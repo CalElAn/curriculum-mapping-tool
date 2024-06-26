@@ -17,7 +17,6 @@ export function useSubformHelpers(
   const form: object & InertiaFormProps<object> = useForm(useFormData);
 
   const adding = ref(subformData.adding ?? false);
-  console.log('SUBFORM DATA===', subformData)
   const editing = ref(false);
 
   function store(): void {

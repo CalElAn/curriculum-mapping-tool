@@ -3,6 +3,9 @@
     @submit.prevent="store()"
     class="rounded-xl border p-4 shadow-sm"
     v-if="editing || adding"
+    :class="{
+      'subform-ring': adding,
+    }"
   >
     <label class="label">Name</label>
     <textarea v-model="form.name" rows="2" class="input mt-2 w-full"></textarea>
@@ -84,8 +87,6 @@ const props = defineProps<{
 
 const emit = defineEmits(emittedEvents);
 
-const _adding = true
-
 const useFormData = {
   name: '',
   coverage_level: props.courseTopicEdgeWeights[0],
@@ -99,7 +100,4 @@ const { form, adding, editing, store, update, destroy } = useSubformHelpers(
   'topics.update',
   'topics.destroy',
 );
-
-  console.log('ADDING====', adding.value)
-
 </script>

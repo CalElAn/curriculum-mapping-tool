@@ -27,6 +27,7 @@
       <div class="mt-4 flex flex-wrap gap-x-5 gap-y-3 rounded-lg border p-4">
         <Subform
           v-for="topic in subformItems"
+          :key="topic"
           :courseId="courseId"
           :topic="topic"
           :courseTopicEdgeWeights="courseTopicEdgeWeights"
@@ -60,7 +61,7 @@ const props = defineProps<{
 const courseId = ref('');
 
 const newTopic = {
-  id: null,
+  id: '',
   name: '',
 };
 
