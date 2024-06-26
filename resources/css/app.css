@@ -1,0 +1,41 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+    .base-card {
+        @apply rounded-2xl bg-white shadow;
+    }
+
+    .input {
+        @apply rounded-md border-gray-300 placeholder:text-sm read-only:bg-slate-100 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 xl:placeholder:text-base;
+    }
+
+    .input-checkbox {
+        @apply rounded border-gray-300 text-blue-600 shadow-sm focus:ring-blue-500;
+    }
+
+    .label {
+        @apply font-semibold tracking-wide;
+    }
+
+    .select {
+        @apply rounded-md border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 disabled:bg-slate-100;
+    }
+
+    .form-title {
+        @apply text-xl font-semibold tracking-wide text-gray-900 md:text-2xl;
+    }
+
+    .subform-title {
+        @apply label text-neutral-950 underline underline-offset-2;
+    }
+
+    .form-title-div {
+        @apply flex flex-col gap-2 sm:flex-row sm:justify-between sm:gap-0;
+    }
+
+    .subform-ring {
+        @apply border border-red-400 ring-4 ring-red-200 ring-opacity-50;
+    }
+}
