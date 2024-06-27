@@ -8,14 +8,19 @@
     }"
   >
     <label class="label">Name</label>
-    <textarea v-model="form.name" rows="2" class="input mt-2 w-full"></textarea>
+    <textarea
+      required
+      v-model="form.name"
+      rows="2"
+      class="input mt-2 w-full"
+    ></textarea>
     <label class="label">Coverage level</label>
-    <select v-model="form.coverage_level" class="select w-full">
+    <select required v-model="form.coverage_level" class="select w-full">
       <option v-for="weight in courseTopicEdgeWeights">
         {{ weight }}
       </option>
     </select>
-    <FormValidationErrors class="sm:col-span-full" :errors="form.errors" />
+    <FormValidationErrors class="mt-2 sm:col-span-full" :errors="form.errors" />
     <AllSubformButtons
       class="mt-4"
       @cancelAdd="$emit('cancelAdd')"
@@ -33,10 +38,11 @@
     v-else
     class="my-auto flex items-center justify-between rounded-lg border border-amber-600 px-2 py-1 text-sm font-medium tracking-wide text-amber-600 shadow-sm hover:bg-amber-50"
   >
-    {{ topic.topic.name }} | {{ topic.covers.coverage_level }}
+    {{ form.name }} | {{ form.coverage_level }}
+
     <button
       id="dropdownMenuIconButton"
-      :data-dropdown-toggle="`dropdownDots${topic.topic.id}`"
+      :data-dropdown-toggle="`dropdownDots${random}`"
       data-dropdown-placement="right"
       class="xrounded-lg xbg-white xtext-center xtext-sm xfont-medium xhover:bg-gray-100 xfocus:outline-none xfocus:ring-4 xfocus:ring-gray-50 inline-flex items-center p-1 text-gray-900"
       type="button"
@@ -46,7 +52,7 @@
 
     <!-- Dropdown menu -->
     <div
-      :id="`dropdownDots${topic.topic.id}`"
+      :id="`dropdownDots${random}`"
       class="z-10 hidden w-44 space-y-2 divide-y divide-gray-100 rounded-2xl bg-white py-2 text-sm shadow dark:divide-gray-600 dark:bg-gray-700"
     >
       <ul
@@ -78,6 +84,8 @@ import { EllipsisVerticalIcon } from '@heroicons/vue/20/solid';
 import AllSubformButtons from '@/Components/AllSubformButtons.vue';
 import FormValidationErrors from '@/Components/FormValidationErrors.vue';
 import { emittedEvents, useSubformHelpers } from '@/Helpers/subformHelpers.js';
+import { initFlowbite } from 'flowbite';
+import { onMounted, watch } from 'vue';
 
 const props = defineProps<{
   courseId: string;
@@ -88,16 +96,25 @@ const props = defineProps<{
 const emit = defineEmits(emittedEvents);
 
 const useFormData = {
-  name: '',
-  coverage_level: props.courseTopicEdgeWeights[0],
+  name: props.topic.name,
+  coverage_level: props.topic.coverage_level ?? props.courseTopicEdgeWeights[0],
 };
 
-const { form, adding, editing, store, update, destroy } = useSubformHelpers(
+const { form, adding, editing, store, update, destroy, id } = useSubformHelpers(
   props.topic,
   useFormData,
   emit,
   route('topics.store', props.courseId),
   'topics.update',
+  [props.courseId],
   'topics.destroy',
 );
+
+const random = Math.round(Math.random() * 10000);
+
+// Flowbite tooltip doesn't work if element was dynamically rendered after initial page initialization.
+// below are necessary so the tooltip can function.
+watch(adding, () => initFlowbite(), { flush: 'post' });
+
+onMounted(() => initFlowbite());
 </script>

@@ -26,7 +26,7 @@
       </div>
       <div class="mt-4 flex flex-wrap gap-x-5 gap-y-3 rounded-lg border p-4">
         <Subform
-          v-for="topic in subformItems"
+          v-for="(topic, index) in subformItems"
           :key="topic"
           :courseId="courseId"
           :topic="topic"
@@ -61,8 +61,9 @@ const props = defineProps<{
 const courseId = ref('');
 
 const newTopic = {
-  id: '',
-  name: '',
+  id: null,
+  name: null,
+  coverage_level: null,
 };
 
 const { subformItems, shouldAllowAdd, add, onCancelAdd, onDestroyed } =

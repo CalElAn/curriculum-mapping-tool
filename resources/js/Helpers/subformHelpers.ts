@@ -10,6 +10,7 @@ export function useSubformHelpers(
   emitFunction: (event: string, ...args: any[]) => void,
   storeRoute: string,
   updateRouteName: string,
+  initialUpdateRouteParams: array,
   destroyRouteName: string,
 ) {
   const id = ref(subformData.id);
@@ -31,11 +32,14 @@ export function useSubformHelpers(
   }
 
   function update(): void {
-    form.patch(route(updateRouteName, id.value), {
-      onSuccess: () => {
-        toast.fire({ title: `Saved!` });
+    form.patch(
+      route(updateRouteName, [...initialUpdateRouteParams, id.value]),
+      {
+        onSuccess: () => {
+          toast.fire({ title: `Saved!` });
+        },
       },
-    });
+    );
   }
 
   function destroy(): void {

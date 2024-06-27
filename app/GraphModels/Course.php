@@ -2,13 +2,11 @@
 
 namespace App\GraphModels;
 
-use Facades\App\GraphModels\GraphClient;
-
-class Course //extends BaseGraphModel
+class Course extends BaseGraphModel
 {
     public static function getAll(): array
     {
-        $coursesResults = GraphClient::client()->run(
+        $coursesResults = static::client()->run(
             <<<'CYPHER'
             MATCH (c:Course)
             RETURN c

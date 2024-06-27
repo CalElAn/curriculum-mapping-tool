@@ -7,10 +7,8 @@ use App\GraphModels\Course;
 use App\GraphModels\Topic;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response;
-use Laudis\Neo4j\Contracts\TransactionInterface;
 
 class TopicController extends Controller
 {
@@ -38,14 +36,22 @@ class TopicController extends Controller
         return back()->with('data', $id);
     }
 
-    public function update(Request $request, string $topicId): RedirectResponse
-    {
-        Topic::update($topicId, $request->name);
+    public function update(
+        Request $request,
+        string $courseId,
+        string $topicId,
+    ): RedirectResponse {
+        Topic::update(
+            $courseId,
+            $topicId,
+            $request->name,
+            $request->coverage_level,
+        );
 
         return back();
     }
 
-    public function delete(Request $request, string $topicId): RedirectResponse
+    public function destroy(Request $request, string $topicId): RedirectResponse
     {
         Topic::delete($topicId);
 

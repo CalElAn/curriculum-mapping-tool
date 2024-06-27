@@ -2,7 +2,6 @@
 
 namespace App\GraphModels;
 
-use Facades\App\GraphModels\GraphClient;
 use Illuminate\Support\Str;
 use Laudis\Neo4j\Contracts\TransactionInterface;
 
@@ -10,7 +9,7 @@ class Topic extends BaseGraphModel
 {
     public static function getTopicsForCourse(string $courseId): array
     {
-        $topicsResults = GraphClient::client()->run(
+        $topicsResults = static::client()->run(
             <<<'CYPHER'
             MATCH (:Course {id: $courseId})-[r_c:COVERS]->(t:Topic)
             RETURN r_c, t
@@ -24,8 +23,12 @@ class Topic extends BaseGraphModel
 
         foreach ($topicsResults as $result) {
             $topics[] = [
-                'topic' => $result->get('t')->getProperties(),
-                'covers' => $result->get('r_c')->getProperties(),
+                'id' => $result->get('t')->getProperties()->get('id'),
+                'name' => $result->get('t')->getProperties()->get('name'),
+                'coverage_level' => $result
+                    ->get('r_c')
+                    ->getProperties()
+                    ->get('coverage_level'),
             ];
         }
 
@@ -39,7 +42,7 @@ class Topic extends BaseGraphModel
     ): string {
         $id = Str::uuid();
 
-        GraphClient::client()->writeTransaction(static function (
+        static::client()->writeTransaction(static function (
             TransactionInterface $tsx,
         ) use ($id, $courseId, $topicName, $topicCoverageLevel) {
             $tsx->run(
@@ -48,7 +51,7 @@ class Topic extends BaseGraphModel
                 CREATE (c)
                 -[:COVERS{coverage_level: $topicCoverageLevel}]->
                 (:Topic {
-                    id: $id
+                    id: $id,
                     name: $topicName,
                     created_at: datetime(),
                     updated_at: datetime()
@@ -67,20 +70,27 @@ class Topic extends BaseGraphModel
         return $id;
     }
 
-    public static function update($id, $name): void
-    {
-        GraphClient::client()->writeTransaction(static function (
+    public static function update(
+        $courseId,
+        $topicId,
+        $name,
+        $coverage_level,
+    ): void {
+        static::client()->writeTransaction(static function (
             TransactionInterface $tsx,
-        ) use ($id, $name) {
+        ) use ($courseId, $topicId, $name, $coverage_level) {
             $tsx->run(
                 <<<'CYPHER'
-                MATCH (t:Topic {id: $id})
+                MATCH (:Course {id: $courseId})-[r_c:COVERS]->(t:Topic {id: $topicId})
                 SET t.name = $name
+                SET r_c.coverage_level = $coverage_level
                 CYPHER
                 ,
                 [
-                    'id' => $id,
+                    'courseId' => $courseId,
+                    'topicId' => $topicId,
                     'name' => $name,
+                    'coverage_level' => $coverage_level,
                 ],
             );
         });
@@ -88,13 +98,13 @@ class Topic extends BaseGraphModel
 
     public static function delete($id): void
     {
-        GraphClient::client()->writeTransaction(static function (
+        static::client()->writeTransaction(static function (
             TransactionInterface $tsx,
         ) use ($id) {
             $tsx->run(
                 <<<'CYPHER'
                 MATCH (t:Topic {id: $id})
-                DELETE t
+                DETACH DELETE t
                 CYPHER
                 ,
                 [

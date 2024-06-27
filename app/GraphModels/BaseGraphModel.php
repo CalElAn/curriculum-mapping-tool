@@ -8,11 +8,9 @@ use Laudis\Neo4j\Contracts\ClientInterface;
 
 class BaseGraphModel
 {
-    public static ClientInterface $client;
-
-    public function __construct()
+    public static function client(): ClientInterface
     {
-        static::$client = ClientBuilder::create()
+        return ClientBuilder::create()
             ->withDriver(
                 'aura',
                 config('aura_db.url'),

@@ -12,8 +12,8 @@ Route::get('/', DashboardController::class)->name('dashboard');
 Route::get('/data-entry/topics/form', [TopicController::class, 'form'])->name('topics.form');
 Route::get('/topics/form/{courseId}/get-topics', [TopicController::class, 'getTopics'])->name('topics.get_topics');
 Route::post('/topics/form/{courseId}', [TopicController::class, 'store'])->name('topics.store');
-Route::patch('/topics/form/{topicId}', [TopicController::class, 'update'])->name('topics.update');
-Route::delete('/topics/form/{topicId}', [TopicController::class, 'delete'])->name('topics.delete');
+Route::patch('/topics/form/{courseId}/{topicId}', [TopicController::class, 'update'])->name('topics.update');
+Route::delete('/topics/form/{topicId}', [TopicController::class, 'destroy'])->name('topics.destroy');
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
