@@ -1,4 +1,4 @@
 # remember to "Register New File Type Association" in PhpStorm or your IDE to get syntax highlighting and other file helpers
-FROM serversideup/php:8.2-fpm-nginx as propduction
+FROM serversideup/php:8.2-fpm-nginx AS production
 
 COPY nginx.prod.http.conf /etc/nginx/site-opts.d/http.conf

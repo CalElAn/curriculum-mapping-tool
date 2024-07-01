@@ -40,6 +40,13 @@ services:
         networks:
             - curriculum-mapping-tool
 
+    npm:
+        image: node:10.8
+        volumes:
+            - .:/var/www/html
+        working_dir: /var/www/html
+        entrypoint: ['npm']
+
 networks:
     curriculum-mapping-tool:
         driver: bridge
