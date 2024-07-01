@@ -1,5 +1,6 @@
 services:
     php:
+        container_name: php
         build:
             context: .
             target: production
@@ -19,6 +20,7 @@ services:
             - curriculum-mapping-tool
 
     mysql:
+        container_name: mysql
         image: mysql:8.0
         ports:
             - 3306:3306
@@ -41,6 +43,7 @@ services:
             - curriculum-mapping-tool
 
     npm:
+        container_name: npm
         image: node:20.15
         volumes:
             - .:/var/www/html

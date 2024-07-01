@@ -2,3 +2,5 @@
 FROM serversideup/php:8.2-fpm-nginx AS production
 
 COPY nginx.prod.http.conf /etc/nginx/site-opts.d/http.conf
+
+COPY --chown=www-data:www-data . /var/www/html
