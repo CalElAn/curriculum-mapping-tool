@@ -1,13 +1,12 @@
 # remember to "Register New File Type Association" in PhpStorm or your IDE to get syntax highlighting and other file helpers
 
-FROM nginx:stable-alpine AS production-server
+FROM nginx:stable AS nginx
 
 COPY nginx.prod.default.conf /etc/nginx/conf.d/default.conf
 
 
+FROM php:8.2-fpm AS php
 
-FROM php:8.2-fpm-alpine AS php
+COPY --from=mlocati/php-extension-installer /usr/bin/install-php-extensions /usr/local/bin/
 
-WORKDIR /var/www/html
-
-RUN docker-php-ext-install pdo pdo_mysql intl zip pcntl
+RUN install-php-extensions pdo pdo_mysql intl zip pcntl

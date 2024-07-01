@@ -3,7 +3,7 @@ services:
     nginx:
         build:
             context: .
-            target: production-server
+            target: nginx
             dockerfile: Dockerfile.prod
         container_name: nginx
         ports:
@@ -23,6 +23,8 @@ services:
             context: .
             target: php
             dockerfile: Dockerfile.prod
+        ports:
+            - 9000:9000 #this port is exposed so that the "fastcgi_pass" param in the nginx config can access the php container
         volumes:
             - .:/var/www/html
         networks:
