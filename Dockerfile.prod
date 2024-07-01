@@ -1,6 +1,13 @@
 # remember to "Register New File Type Association" in PhpStorm or your IDE to get syntax highlighting and other file helpers
-FROM serversideup/php:8.2-fpm-nginx AS production
 
-COPY nginx.prod.http.conf /etc/nginx/site-opts.d/http.conf
+FROM nginx:stable-alpine AS production-server
 
-COPY --chown=www-data:www-data . /var/www/html
+COPY nginx.prod.default.conf /etc/nginx/conf.d/default.conf
+
+
+
+FROM php:8.2-fpm-alpine AS php
+
+WORKDIR /var/www/html
+
+RUN docker-php-ext-install pdo pdo_mysql intl zip pcntl

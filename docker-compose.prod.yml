@@ -1,21 +1,30 @@
 services:
+
+    nginx:
+        build:
+            context: .
+            target: production-server
+            dockerfile: Dockerfile.prod
+        container_name: nginx
+        ports:
+            - 80:80
+            - 443:443
+        volumes:
+            - .:/var/www/html
+        depends_on:
+            - php
+            - mysql
+        networks:
+            - curriculum-mapping-tool
+
     php:
         container_name: php
         build:
             context: .
-            target: production
+            target: php
             dockerfile: Dockerfile.prod
-        ports:
-            # Since the "serversideup/php:8.2-fpm-nginx" image is not privileged (that means it runs as the OS-native www-data user), it doesn't run on ports less than 1024.
-            # Therefore, the default ports for the image are => HTTP: 8080, HTTPS: 8443.
-            # So we use Docker's port mapping feature to map the host port to the container port (HOST:CONTAINER).
-            # https://serversideup.net/open-source/docker-php/docs/getting-started/default-configurations#unprivileged-by-default
-            - 80:8080
-            - 443:8443
         volumes:
             - .:/var/www/html
-        depends_on:
-            - mysql
         networks:
             - curriculum-mapping-tool
 
@@ -41,6 +50,17 @@ services:
             timeout: 5s
         networks:
             - curriculum-mapping-tool
+
+    composer:
+        image: composer:latest
+        container_name: composer
+        volumes:
+          - .:/var/www/html
+        working_dir: /var/www/html
+        depends_on:
+          - php
+        networks:
+          - curriculum-mapping-tool
 
     npm:
         container_name: npm
