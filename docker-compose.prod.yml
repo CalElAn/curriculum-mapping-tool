@@ -55,10 +55,7 @@ services:
 
     composer:
         container_name: composer
-        build:
-            context: .
-            target: composer
-            dockerfile: Dockerfile.prod
+        image: composer:latest
         volumes:
           - .:/var/www/html
         working_dir: /var/www/html
