@@ -4,6 +4,11 @@ FROM nginx:stable AS nginx
 
 COPY nginx.prod.default.conf /etc/nginx/conf.d/default.conf
 
+COPY [
+    "set-folder-permissions-in-nginx-container.sh",
+    "/docker-entrypoint.d/set-folder-permissions-in-nginx-container.sh"
+]
+
 
 FROM php:8.2-fpm AS php
 
