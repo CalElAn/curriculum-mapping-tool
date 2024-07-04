@@ -54,8 +54,11 @@ services:
             - curriculum-mapping-tool
 
     composer:
-        image: composer:latest
         container_name: composer
+        build:
+            context: .
+            target: composer
+            dockerfile: Dockerfile.prod
         volumes:
           - .:/var/www/html
         working_dir: /var/www/html
