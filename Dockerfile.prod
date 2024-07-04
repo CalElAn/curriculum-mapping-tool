@@ -4,10 +4,7 @@ FROM nginx:stable AS nginx
 
 COPY nginx.prod.default.conf /etc/nginx/conf.d/default.conf
 
-COPY [
-    "set-folder-permissions-in-nginx-container.sh",
-    "/docker-entrypoint.d/set-folder-permissions-in-nginx-container.sh"
-]
+COPY "set-folder-permissions-in-nginx-container.sh" "/docker-entrypoint.d/set-folder-permissions-in-nginx-container.sh"
 
 
 FROM php:8.2-fpm AS php
@@ -15,3 +12,10 @@ FROM php:8.2-fpm AS php
 COPY --from=mlocati/php-extension-installer /usr/bin/install-php-extensions /usr/local/bin/
 
 RUN install-php-extensions pdo pdo_mysql intl zip pcntl
+
+
+FROM composer:latest as composer
+
+# Doing this because composer is built on an alpine image so the id and group id for www-data is 82.
+RUN groupmod -g 33 www-data
+RUN usermod -u 33 www-data
