@@ -62,7 +62,7 @@ services:
         volumes:
           - .:/var/www/html
         working_dir: /var/www/html
-        user: 'www-data'
+        user: 33:33 # because www-data is 82:82 in alpine linux, so we change it to be consistent with www-data id and group id on host machine
         entrypoint: ['composer']
         depends_on:
           - php
