@@ -2,7 +2,8 @@
 
 # remember to make this file executable: chmod +x set-folder-permissions-in-nginx-container.sh
 
-chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+#chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+chown -R www-data:www-data .
 
 # Nginx has a /docker-entrypoint.d folder which contains scripts that are executed when its started,
 #   In the Dockerfile, this script is copied to that directory so that permissions are changed for us on startup.
