@@ -55,7 +55,7 @@ import TabLink from '@/Components/TabLink.vue';
                 ? 'bg-red-200 font-semibold text-red-600'
                 : 'font-medium hover:text-red-600 hover:underline',
             ]"
-            :href="route('dashboard')"
+            :href="route('topics.form')"
             class="flex w-full items-center justify-start gap-2 rounded-lg py-2 pl-3 tracking-wide"
           >
             <SquaresPlusIcon class="h-5 w-5 text-red-600" />
@@ -69,7 +69,7 @@ import TabLink from '@/Components/TabLink.vue';
                 ? 'bg-red-200 font-semibold text-red-600'
                 : 'font-medium hover:text-red-600 hover:underline',
             ]"
-            :href="route('dashboard')"
+            :href="route('topics.visualization')"
             class="flex w-full items-center justify-start gap-2 rounded-lg py-2 pl-3 tracking-wide"
           >
             <svg

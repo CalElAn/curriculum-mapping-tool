@@ -40,18 +40,30 @@ class Topic extends BaseGraphModel
         string $topicName,
         string $topicCoverageLevel,
     ): string {
-        $id = Str::uuid();
+        $courseCoversId = Str::uuid();
+        $topicId = Str::uuid();
 
         static::client()->writeTransaction(static function (
             TransactionInterface $tsx,
-        ) use ($id, $courseId, $topicName, $topicCoverageLevel) {
+        ) use (
+            $courseId,
+            $courseCoversId,
+            $topicCoverageLevel,
+            $topicId,
+            $topicName,
+        ) {
             $tsx->run(
                 <<<'CYPHER'
                 MATCH (c:Course {id: $courseId})
                 CREATE (c)
-                -[:COVERS{coverage_level: $topicCoverageLevel}]->
+                -[:COVERS{
+                    id: $courseCoversId,
+                    coverage_level: $topicCoverageLevel,
+                    created_at: datetime(),
+                    updated_at: datetime()
+                }]->
                 (:Topic {
-                    id: $id,
+                    id: $topicId,
                     name: $topicName,
                     created_at: datetime(),
                     updated_at: datetime()
@@ -59,15 +71,16 @@ class Topic extends BaseGraphModel
                 CYPHER
                 ,
                 [
-                    'id' => $id,
                     'courseId' => $courseId,
-                    'topicName' => $topicName,
+                    'courseCoversId' => $courseCoversId,
                     'topicCoverageLevel' => $topicCoverageLevel,
+                    'topicId' => $topicId,
+                    'topicName' => $topicName,
                 ],
             );
         });
 
-        return $id;
+        return $topicId;
     }
 
     public static function update(

@@ -12,7 +12,7 @@
     }
 
     .input-checkbox {
-        @apply rounded border-gray-300 text-blue-600 shadow-sm focus:ring-blue-500;
+        @apply rounded border-gray-300 text-blue-400 focus:ring-blue-200;
     }
 
     .label {

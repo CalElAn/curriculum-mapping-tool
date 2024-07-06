@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Enums\CourseTopicEdgeWeights;
+use App\GraphModels\BaseGraphModel;
 use App\GraphModels\Course;
 use App\GraphModels\Topic;
 use Illuminate\Http\RedirectResponse;
@@ -17,6 +18,23 @@ class TopicController extends Controller
         return Inertia::render('Topic/Form', [
             'courses' => Course::getAll(),
             'courseTopicEdgeWeights' => CourseTopicEdgeWeights::cases(),
+        ]);
+    }
+
+    public function visualization(): Response
+    {
+        $coursesWithTopics = Course::getAllWithTopics();
+
+        return Inertia::render('Topic/Visualization', [
+            'courses' => BaseGraphModel::getUniqueResults(
+                array_column($coursesWithTopics, 'course'),
+            ),
+            'topics' => BaseGraphModel::getUniqueResults(
+                array_column($coursesWithTopics, 'topic'),
+            ),
+            'coursesWithTopics' => $coursesWithTopics,
+            'courseTopicEdgeWeights' => CourseTopicEdgeWeights::cases(),
+
         ]);
     }
 

@@ -14,6 +14,7 @@ Route::get('/topics/form/{courseId}/get-topics', [TopicController::class, 'getTo
 Route::post('/topics/form/{courseId}', [TopicController::class, 'store'])->name('topics.store');
 Route::patch('/topics/form/{courseId}/{topicId}', [TopicController::class, 'update'])->name('topics.update');
 Route::delete('/topics/form/{topicId}', [TopicController::class, 'destroy'])->name('topics.destroy');
+Route::get('/visualization/topics', [TopicController::class, 'visualization'])->name('topics.visualization');
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');

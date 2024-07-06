@@ -34,10 +34,7 @@
       :form="form"
     />
   </form>
-  <div
-    v-else
-    class="my-auto flex items-center justify-between rounded-lg border border-amber-600 px-2 py-1 text-sm font-medium tracking-wide text-amber-600 shadow-sm hover:bg-amber-50"
-  >
+  <PillDiv v-else>
     {{ form.name }} | {{ form.coverage_level }}
 
     <button
@@ -76,13 +73,14 @@
         >
       </div>
     </div>
-  </div>
+  </PillDiv>
 </template>
 
 <script setup lang="ts">
 import { EllipsisVerticalIcon } from '@heroicons/vue/20/solid';
 import AllSubformButtons from '@/Components/AllSubformButtons.vue';
 import FormValidationErrors from '@/Components/FormValidationErrors.vue';
+import PillDiv from '@/Components/PillDiv.vue';
 import { emittedEvents, useSubformHelpers } from '@/Helpers/subformHelpers.js';
 import { initFlowbite } from 'flowbite';
 import { onMounted, watch } from 'vue';

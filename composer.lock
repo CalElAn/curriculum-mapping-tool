@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f7a1b221fa22fdc992a22114f506191c",
+    "content-hash": "236ba34bab0db4c1ef78e1fedb2016cf",
     "packages": [
         {
             "name": "brick/math",
@@ -5164,6 +5164,82 @@
             "time": "2024-05-31T15:07:36+00:00"
         },
         {
+            "name": "symfony/polyfill-php81",
+            "version": "v1.30.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/polyfill-php81.git",
+                "reference": "3fb075789fb91f9ad9af537c4012d523085bd5af"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/polyfill-php81/zipball/3fb075789fb91f9ad9af537c4012d523085bd5af",
+                "reference": "3fb075789fb91f9ad9af537c4012d523085bd5af",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.1"
+            },
+            "type": "library",
+            "extra": {
+                "thanks": {
+                    "name": "symfony/polyfill",
+                    "url": "https://github.com/symfony/polyfill"
+                }
+            },
+            "autoload": {
+                "files": [
+                    "bootstrap.php"
+                ],
+                "psr-4": {
+                    "Symfony\\Polyfill\\Php81\\": ""
+                },
+                "classmap": [
+                    "Resources/stubs"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Nicolas Grekas",
+                    "email": "p@tchwork.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony polyfill backporting some PHP 8.1+ features to lower PHP versions",
+            "homepage": "https://symfony.com",
+            "keywords": [
+                "compatibility",
+                "polyfill",
+                "portable",
+                "shim"
+            ],
+            "support": {
+                "source": "https://github.com/symfony/polyfill-php81/tree/v1.30.0"
+            },
+            "funding": [
+                {
+                    "url": "https://symfony.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2024-06-19T12:30:46+00:00"
+        },
+        {
             "name": "symfony/polyfill-php83",
             "version": "v1.30.0",
             "source": {
@@ -6296,6 +6372,92 @@
                 "source": "https://github.com/webmozarts/assert/tree/1.11.0"
             },
             "time": "2022-06-03T18:03:27+00:00"
+        },
+        {
+            "name": "wikibase-solutions/php-cypher-dsl",
+            "version": "6.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/neo4j-php/php-cypher-dsl.git",
+                "reference": "259564dd114e7432876d07613f57a4b299c1f483"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/neo4j-php/php-cypher-dsl/zipball/259564dd114e7432876d07613f57a4b299c1f483",
+                "reference": "259564dd114e7432876d07613f57a4b299c1f483",
+                "shasum": ""
+            },
+            "require": {
+                "ext-ctype": "*",
+                "ext-openssl": "*",
+                "php": ">=7.4",
+                "symfony/polyfill-php80": "^1.25",
+                "symfony/polyfill-php81": "^1.25"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^3.0",
+                "infection/infection": "^0.25.5",
+                "phpstan/phpstan": "^1.8",
+                "phpunit/phpunit": "~9.0",
+                "rregeer/phpunit-coverage-check": "^0.3.1"
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "src/functions.php"
+                ],
+                "psr-4": {
+                    "WikibaseSolutions\\CypherDSL\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Marijn van Wezel",
+                    "email": "marijn@wikibase.nl",
+                    "homepage": "https://wikibase-solutions.com/author/marijn",
+                    "role": "Maintainer"
+                },
+                {
+                    "name": "Wout Gevaert",
+                    "email": "wout@wikibase.nl",
+                    "homepage": "https://wikibase-solutions.com/author/wout",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Ghlen Nagels",
+                    "email": "ghlen@nagels.tech",
+                    "homepage": "https://nagels.tech",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Lars Akkermans",
+                    "email": "lars@wikibase.nl",
+                    "homepage": "https://wikibase-solutions.com/author/lars",
+                    "role": "Developer"
+                }
+            ],
+            "description": "A query builder for the Cypher query language written in PHP",
+            "homepage": "https://wikibase-solutions.com",
+            "keywords": [
+                "DSL",
+                "builder",
+                "cypher",
+                "graph",
+                "neo4j",
+                "query",
+                "querybuilder"
+            ],
+            "support": {
+                "email": "info@wikibase-solutions.com",
+                "issues": "https://github.com/WikibaseSolutions/php-cypher-dsl/issues",
+                "source": "https://github.com/WikibaseSolutions/php-cypher-dsl",
+                "wiki": "https://github.com/WikibaseSolutions/php-cypher-dsl/wiki"
+            },
+            "time": "2023-09-19T09:30:29+00:00"
         }
     ],
     "packages-dev": [

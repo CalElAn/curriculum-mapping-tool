@@ -15,12 +15,24 @@ class Course extends BaseGraphModel
             ,
         );
 
-        $courses = [];
+        return static::buildArrayFromResults($coursesResults, ['c']);
+    }
 
-        foreach ($coursesResults as $result) {
-            $courses[] = $result->get('c')->getProperties();
-        }
+    public static function getAllWithTopics(): array
+    {
+        $results = static::client()->run(
+            <<<'CYPHER'
+            MATCH (c:Course)-[r_c:COVERS]->(t:Topic)
+            RETURN c, r_c, t
+            ORDER BY c.number
+            CYPHER
+            ,
+        );
 
-        return $courses;
+        return static::buildArrayFromResults($results, [
+            'course' => 'c',
+            'covers' => 'r_c',
+            'topic' => 't',
+        ]);
     }
 }
