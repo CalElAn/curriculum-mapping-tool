@@ -31,8 +31,12 @@
           :courseId="courseId"
           :topic="topic"
           :courseTopicEdgeWeights="courseTopicEdgeWeights"
+          :allTopicNames="allTopicNames"
           @cancelAdd="onCancelAdd()"
-          @stored="shouldAllowAdd = true"
+          @stored="
+            (eventArgs) =>
+              (shouldAllowAdd = true) && (allTopicNames = eventArgs.newNames)
+          "
           @destroyed="onDestroyed(index)"
         />
         <p
@@ -66,6 +70,8 @@ const newTopic = {
   coverage_level: null,
 };
 
+const allTopicNames = ref([]);
+
 const { subformItems, shouldAllowAdd, add, onCancelAdd, onDestroyed } =
   useFormHelpers([], newTopic);
 
@@ -76,7 +82,8 @@ watch(courseId, (newCourseId) => {
   }
 
   axios.get(route('topics.get_topics', newCourseId)).then((response) => {
-    subformItems.value = response.data;
+    subformItems.value = response.data.topics;
+    allTopicNames.value = response.data.allTopicNames;
   });
 
   shouldAllowAdd.value = true;

@@ -2,12 +2,12 @@ import { ref } from 'vue';
 import { useForm, usePage } from '@inertiajs/vue3';
 import { toast, deleteConfirmationDialog } from '@/Components/swal.js';
 
-export const emittedEvents: string[] = ['cancelAdd', 'stored', 'destroyed'];
+export const emittedEvents = ['cancelAdd', 'stored', 'destroyed', 'updateUniqueNames'] as const;
 
 export function useSubformHelpers(
   subformData: object,
   useFormData: object,
-  emitFunction: (event: string, ...args: any[]) => void,
+  emitFunction: (event: typeof emittedEvents[number], ...args: any[]) => void,
   storeRoute: string,
   updateRouteName: string,
   initialUpdateRouteParams: array,
@@ -24,8 +24,11 @@ export function useSubformHelpers(
     form.post(storeRoute, {
       onSuccess: () => {
         adding.value = false;
-        id.value = usePage().props.session.data;
-        emitFunction('stored');
+        id.value = usePage().props.session.data.id;
+        emitFunction('stored', {
+          newNames: usePage().props.session.data.newNames,
+        });
+        emitFunction('')
         toast.fire({ title: `Added!` });
       },
     });

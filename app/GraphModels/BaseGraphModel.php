@@ -33,7 +33,11 @@ class BaseGraphModel
 
             foreach ($keyValuePairs as $key => $value) {
                 if (is_int($key)) {
-                    $resultsArray[] = $result->get($value)->getProperties();
+                    if (is_string($result->get($value))) {
+                        $resultsArray[] = $result->get($value);
+                    } else {
+                        $resultsArray[] = $result->get($value)->getProperties();
+                    }
                 } else {
                     $keyValuePairArray[$key] = $result
                         ->get($value)

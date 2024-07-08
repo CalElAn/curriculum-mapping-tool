@@ -8,14 +8,107 @@
     }"
   >
     <label class="label">Name</label>
-    <textarea
+    <Combobox v-model="form.name">
+      <div class="relative mt-1 w-full">
+        <!--        <div
+          class="relative w-full overflow-hidden "
+        >-->
+        <ComboboxInput
+          class="input w-full"
+          :displayValue="(topicName) => topicName"
+          @change="query = $event.target.value"
+          as="textarea"
+          rows="2"
+          required
+        />
+        <ComboboxButton
+          class="absolute inset-y-3 right-0 flex items-center pr-2"
+        >
+          <ChevronUpDownIcon
+            class="mb-0.5 mr-0.5 h-5 w-5 text-gray-800"
+            aria-hidden="true"
+          />
+        </ComboboxButton>
+        <!--        </div>-->
+        <TransitionRoot
+          leave="transition ease-in duration-100"
+          leaveFrom="opacity-100"
+          leaveTo="opacity-0"
+          @after-leave="query = ''"
+        >
+          <ComboboxOptions
+            class="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm"
+          >
+            <ComboboxOption
+              v-if="filteredTopicNames.length === 0 && query !== ''"
+              as="template"
+              :key="query"
+              :value="query"
+            >
+              <li
+                class="relative cursor-default select-none py-2 pl-10 pr-4"
+                :class="{
+                  'bg-blue-500 text-white': active,
+                  'text-gray-900': !active,
+                }"
+              >
+                <span
+                  class="block truncate"
+                  :class="{ 'font-medium': selected, 'font-normal': !selected }"
+                >
+                  {{ query }}
+                </span>
+                <span
+                  v-if="selected"
+                  class="absolute inset-y-0 left-0 flex items-center pl-3"
+                  :class="{ 'text-white': active, 'text-blue-500': !active }"
+                >
+                  <CheckIcon class="h-5 w-5" aria-hidden="true" />
+                </span>
+              </li>
+            </ComboboxOption>
+
+            <ComboboxOption
+              v-for="topicName in filteredTopicNames"
+              as="template"
+              :key="topicName"
+              :value="topicName"
+              v-slot="{ selected, active }"
+            >
+              <li
+                class="relative cursor-default select-none py-2 pl-10 pr-4"
+                :class="{
+                  'bg-blue-500 text-white': active,
+                  'text-gray-900': !active,
+                }"
+              >
+                <span
+                  class="block truncate"
+                  :class="{ 'font-medium': selected, 'font-normal': !selected }"
+                >
+                  {{ topicName }}
+                </span>
+                <span
+                  v-if="selected"
+                  class="absolute inset-y-0 left-0 flex items-center pl-3"
+                  :class="{ 'text-white': active, 'text-blue-500': !active }"
+                >
+                  <CheckIcon class="h-5 w-5" aria-hidden="true" />
+                </span>
+              </li>
+            </ComboboxOption>
+          </ComboboxOptions>
+        </TransitionRoot>
+      </div>
+    </Combobox>
+    <!--    <textarea
       required
       v-model="form.name"
       rows="2"
       class="input mt-2 w-full"
-    ></textarea>
-    <label class="label">Coverage level</label>
-    <select required v-model="form.coverage_level" class="select w-full">
+    ></textarea>-->
+    <label class="label mt-4 block">Coverage level</label>
+    <select required v-model="form.coverage_level" class="select mt-1 w-full">
       <option v-for="weight in courseTopicEdgeWeights">
         {{ weight }}
       </option>
@@ -34,7 +127,7 @@
       :form="form"
     />
   </form>
-  <PillDiv v-else>
+  <PillDiv class="my-auto" v-else>
     {{ form.name }} | {{ form.coverage_level }}
 
     <button
@@ -83,13 +176,36 @@ import FormValidationErrors from '@/Components/FormValidationErrors.vue';
 import PillDiv from '@/Components/PillDiv.vue';
 import { emittedEvents, useSubformHelpers } from '@/Helpers/subformHelpers.js';
 import { initFlowbite } from 'flowbite';
-import { onMounted, watch } from 'vue';
+import { onMounted, watch, ref, computed } from 'vue';
+import {
+  Combobox,
+  ComboboxInput,
+  ComboboxButton,
+  ComboboxOptions,
+  ComboboxOption,
+  TransitionRoot,
+} from '@headlessui/vue';
+import { CheckIcon, ChevronUpDownIcon } from '@heroicons/vue/20/solid';
 
 const props = defineProps<{
   courseId: string;
   topic: Object;
+  allTopicNames: Array<string>;
   courseTopicEdgeWeights: Array<string>;
 }>();
+
+let query = ref('');
+
+let filteredTopicNames = computed(() =>
+  query.value === ''
+    ? props.allTopicNames
+    : props.allTopicNames.filter((topicName) =>
+        String(topicName)
+          .toLowerCase()
+          .replace(/\s+/g, '')
+          .includes(query.value.toLowerCase().replace(/\s+/g, '')),
+      ),
+);
 
 const emit = defineEmits(emittedEvents);
 

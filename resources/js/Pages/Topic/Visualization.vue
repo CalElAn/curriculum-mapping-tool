@@ -84,20 +84,32 @@ function toggleCourseVisibility(courseId: string, setVisibilityTo = null) {
 
   if (typeof setVisibilityTo === 'boolean') {
     isCourseVisible = setVisibilityTo;
-  }
-  if (typeof isCourseVisible === 'undefined' || isCourseVisible === false) {
-    isCourseVisible = false;
+  } else {
+    if (typeof isCourseVisible === 'undefined' || isCourseVisible === false) {
+      isCourseVisible = false;
+    }
   }
 
   let nodeUpdates = [{ id: courseId, hidden: !isCourseVisible }];
 
   nodeUpdates.push(
     ...props.coursesWithTopics
-      .filter((item) => item.course.id === courseId)
+      .filter(
+        (item) =>
+          item.course.id === courseId &&
+          !isTopicAttachedToMultipleCourses(item.topic.id),
+      )
       .map((item) => ({ id: item.topic.id, hidden: !isCourseVisible })),
   );
 
   nodes.update(nodeUpdates);
+}
+
+function isTopicAttachedToMultipleCourses(topicId) {
+  return (
+    props.coursesWithTopics.filter((item) => item.topic.id === topicId).length >
+    1
+  );
 }
 
 const data = {

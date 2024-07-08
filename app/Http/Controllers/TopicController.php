@@ -34,13 +34,15 @@ class TopicController extends Controller
             ),
             'coursesWithTopics' => $coursesWithTopics,
             'courseTopicEdgeWeights' => CourseTopicEdgeWeights::cases(),
-
         ]);
     }
 
     public function getTopics(Request $request, string $courseId): array
     {
-        return Topic::getTopicsForCourse($courseId);
+        return [
+            'allTopicNames' => Topic::getAllTopicNames(),
+            'topics' => Topic::getTopicsForCourse($courseId),
+        ];
     }
 
     public function store(Request $request, string $courseId): RedirectResponse
@@ -51,7 +53,10 @@ class TopicController extends Controller
             $request->coverage_level,
         );
 
-        return back()->with('data', $id);
+        return back()->with('data', [
+            'id' => $id,
+            'newNames' => Topic::getTopicsForCourse($courseId),
+        ]);
     }
 
     public function update(
