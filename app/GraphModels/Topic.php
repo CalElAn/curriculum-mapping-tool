@@ -77,69 +77,44 @@ class Topic extends BaseGraphModel
         return static::buildArrayFromResults($topicNames, ['t.name']);
     }
 
-    public static function create(
-        string $courseId,
-        string $topicName,
-        string $topicCoverageLevel,
-    ): string {
-        $topicId = Str::uuid();
+    public static function create(string $name): string
+    {
+        $id = Str::uuid()->toString();
+
+        $query = query()
+            ->create(
+                node('Topic')->withProperties([
+                    'id' => $id,
+                    'name' => $name,
+                    'created_at' => 'datetime()',
+                    'updated_at' => 'datetime()',
+                ]),
+            )
+            ->build();
 
         static::client()->writeTransaction(static function (
             TransactionInterface $tsx,
-        ) use ($courseId, $topicCoverageLevel, $topicId, $topicName) {
-            $tsx->run(
-                <<<'CYPHER'
-                MERGE (t:Topic {name: $topicName})
-                ON CREATE SET
-                    t.id = $topicId,
-                    t.name = $topicName,
-                    t.created_at = datetime(),
-                    t.updated_at = datetime()
-                WITH t
-                MATCH (c:Course {id: $courseId})
-                CREATE (c)
-                -[:COVERS{
-                    id: randomUUID(),
-                    coverage_level: $topicCoverageLevel,
-                    created_at: datetime(),
-                    updated_at: datetime()
-                }]->
-                (t)
-                CYPHER
-                ,
-                [
-                    'courseId' => $courseId,
-                    'topicCoverageLevel' => $topicCoverageLevel,
-                    'topicId' => $topicId,
-                    'topicName' => $topicName,
-                ],
-            );
+        ) use ($query) {
+            $tsx->run($query);
         });
 
-        return $topicId;
+        return $id;
     }
 
-    public static function update(
-        $courseId,
-        $topicId,
-        $name,
-        $coverage_level,
-    ): void {
+    public static function update(string $id, string $name): void
+    {
         static::client()->writeTransaction(static function (
             TransactionInterface $tsx,
-        ) use ($courseId, $topicId, $name, $coverage_level) {
+        ) use ($id, $name) {
             $tsx->run(
                 <<<'CYPHER'
-                MATCH (:Course {id: $courseId})-[r_c:COVERS]->(t:Topic {id: $topicId})
+                MATCH (t:Topic {id: $id})
                 SET t.name = $name
-                SET r_c.coverage_level = $coverage_level
                 CYPHER
                 ,
                 [
-                    'courseId' => $courseId,
-                    'topicId' => $topicId,
+                    'id' => $id,
                     'name' => $name,
-                    'coverage_level' => $coverage_level,
                 ],
             );
         });

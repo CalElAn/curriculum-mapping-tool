@@ -27,11 +27,16 @@
     <template #viewingContainer>
       <div
         v-if="viewing && topic.id"
-        class="col-span-1 mt-4 flex flex-wrap gap-x-5 gap-y-3 rounded-lg border p-4"
+        class="viewing-subform-container col-span-1 mt-2 flex flex-wrap gap-x-5 gap-y-3"
       >
-        <div v-for="item in subformItems" class="flex items-center gap-2">
-          <CourseAllocationSubform :courseData="item" />
-        </div>
+        <CourseAllocationSubform
+          v-for="item in subformItems"
+          :key="item"
+          :courseData="item"
+          @cancelAdd="onCancelAdd()"
+          @stored="shouldAllowAdd = true"
+          @destroyed="onDestroyed(index)"
+        />
       </div>
     </template>
   </SubformWrapper>
@@ -40,9 +45,7 @@
 <script setup lang="ts">
 import SubformWrapper from '@/Components/SubformWrapper.vue';
 import FormValidationErrors from '@/Components/FormValidationErrors.vue';
-import SubformButton from '@/Components/SubformButton.vue';
 import { emittedEvents, useSubformHelpers } from '@/Helpers/subformHelpers.js';
-import { SquaresPlusIcon, Squares2X2Icon } from '@heroicons/vue/24/outline';
 import { computed, ref, watch } from 'vue';
 import CourseAllocationSubform from '@/Pages/Topic/CourseAllocationSubform.vue';
 import { useFormHelpers } from '@/Helpers/formHelpers';
@@ -67,6 +70,7 @@ const { id, form, adding, editing, store, update, destroy } = useSubformHelpers(
   emit,
   route('topics.store'),
   'topics.update',
+  [],
   'topics.destroy',
 );
 
@@ -79,8 +83,8 @@ const newCoversRelationship = computed(() => ({
 const { subformItems, shouldAllowAdd, add, onCancelAdd, onDestroyed } =
   useFormHelpers([], newCoversRelationship);
 
-watch(viewing, (shouldAllocate) => {
-  if (!shouldAllocate) {
+watch(viewing, (shouldView) => {
+  if (!shouldView) {
     subformItems.value = [];
     return;
   }
@@ -88,7 +92,5 @@ watch(viewing, (shouldAllocate) => {
   axios.get(route('topics.get_courses', id.value)).then((response) => {
     subformItems.value = response.data;
   });
-
-  shouldAllowAdd.value = true;
 });
 </script>

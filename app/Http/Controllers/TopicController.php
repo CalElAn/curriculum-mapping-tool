@@ -43,46 +43,23 @@ class TopicController extends Controller
         return Topic::getCourses($topicId);
     }
 
-    public function getTopics(Request $request, string $courseId): array
+    public function store(Request $request): RedirectResponse
     {
-        return [
-            'allTopicNames' => Topic::getAllTopicNames(),
-            'topics' => Topic::getTopicsForCourse($courseId),
-        ];
+        $id = Topic::create($request->name);
+
+        return back()->with('data', ['id' => $id]);
     }
 
-    public function store(Request $request, string $courseId): RedirectResponse
+    public function update(Request $request, string $id): RedirectResponse
     {
-        $id = Topic::create(
-            $courseId,
-            $request->name,
-            $request->coverage_level,
-        );
-
-        return back()->with('data', [
-            'id' => $id,
-            'newNames' => Topic::getTopicsForCourse($courseId),
-        ]);
-    }
-
-    public function update(
-        Request $request,
-        string $courseId,
-        string $topicId,
-    ): RedirectResponse {
-        Topic::update(
-            $courseId,
-            $topicId,
-            $request->name,
-            $request->coverage_level,
-        );
+        Topic::update($id, $request->name);
 
         return back();
     }
 
-    public function destroy(Request $request, string $topicId): RedirectResponse
+    public function destroy(Request $request, string $id): RedirectResponse
     {
-        Topic::delete($topicId);
+        Topic::delete($id);
 
         return back();
     }

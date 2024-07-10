@@ -11,7 +11,7 @@
     >
       <slot />
     </form>
-    <slot name="viewingContainer"/>
+    <slot name="viewingContainer" />
   </div>
 </template>
 
