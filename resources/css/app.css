@@ -27,6 +27,14 @@
         @apply text-xl font-semibold tracking-wide text-gray-900 md:text-2xl;
     }
 
+    .subform {
+        @apply border border-gray-100 odd:bg-gray-100 even:bg-white;
+    }
+
+    .subform-form {
+        @apply grid grid-cols-1 gap-y-3 p-2 sm:gap-y-4;
+    }
+
     .subform-title {
         @apply label text-neutral-950 underline underline-offset-2;
     }

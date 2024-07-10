@@ -172,16 +172,13 @@ import TabLink from '@/Components/TabLink.vue';
     >
       <ul class="-mb-px flex flex-wrap">
         <li class="me-2">
+          <TabLink title="Courses" activeIfIncludes="courses" />
+        </li>
+        <li class="me-2">
           <TabLink title="Topics" activeIfIncludes="topics" />
         </li>
         <li class="me-2">
-          <TabLink title="Course Outcomes" activeIfIncludes="course-outcomes" />
-        </li>
-        <li class="me-2">
-          <TabLink
-            title="Program Outcomes"
-            activeIfIncludes="program-outcomes"
-          />
+          <TabLink title="Knowledge Areas" activeIfIncludes="knowledge-areas" />
         </li>
       </ul>
     </div>

@@ -4,20 +4,6 @@ namespace App\GraphModels;
 
 class Course extends BaseGraphModel
 {
-    public static function getAll(): array
-    {
-        $coursesResults = static::client()->run(
-            <<<'CYPHER'
-            MATCH (c:Course)
-            RETURN c
-            ORDER BY c.number
-            CYPHER
-            ,
-        );
-
-        return static::buildArrayFromResults($coursesResults, ['c']);
-    }
-
     public static function getAllWithTopics(): array
     {
         $results = static::client()->run(

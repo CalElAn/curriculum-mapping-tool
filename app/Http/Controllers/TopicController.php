@@ -16,7 +16,8 @@ class TopicController extends Controller
     public function form(): Response
     {
         return Inertia::render('Topic/Form', [
-            'courses' => Course::getAll(),
+            'initialTopics' => BaseGraphModel::getAll('Topic', 'name'),
+            'allCourses' => BaseGraphModel::getAll('Course', 'number'),
             'courseTopicEdgeWeights' => CourseTopicEdgeWeights::cases(),
         ]);
     }
@@ -35,6 +36,11 @@ class TopicController extends Controller
             'coursesWithTopics' => $coursesWithTopics,
             'courseTopicEdgeWeights' => CourseTopicEdgeWeights::cases(),
         ]);
+    }
+
+    public function getCourses(Request $request, string $topicId): array
+    {
+        return Topic::getCourses($topicId);
     }
 
     public function getTopics(Request $request, string $courseId): array

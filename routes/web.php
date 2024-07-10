@@ -10,8 +10,9 @@ use Inertia\Inertia;
 Route::get('/', DashboardController::class)->name('dashboard');
 
 Route::get('/data-entry/topics/form', [TopicController::class, 'form'])->name('topics.form');
-Route::get('/topics/form/{courseId}/get-topics', [TopicController::class, 'getTopics'])->name('topics.get_topics');
-Route::post('/topics/form/{courseId}', [TopicController::class, 'store'])->name('topics.store');
+Route::get('/topics/form/{topicId}/get-courses', [TopicController::class, 'getCourses'])->name('topics.get_courses');
+//Route::get('/topics/form/{courseId}/get-topics', [TopicController::class, 'getTopics'])->name('topics.get_topics');
+Route::post('/topics/form', [TopicController::class, 'store'])->name('topics.store');
 Route::patch('/topics/form/{courseId}/{topicId}', [TopicController::class, 'update'])->name('topics.update');
 Route::delete('/topics/form/{topicId}', [TopicController::class, 'destroy'])->name('topics.destroy');
 Route::get('/visualization/topics', [TopicController::class, 'visualization'])->name('topics.visualization');

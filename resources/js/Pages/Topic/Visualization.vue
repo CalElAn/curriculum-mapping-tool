@@ -2,6 +2,7 @@
 import { Head } from '@inertiajs/vue3';
 import { onMounted, ref, watch } from 'vue';
 import { DataSet, Network } from 'vis-network/standalone';
+import map from 'lodash/map';
 import PillDiv from '@/Components/PillDiv.vue';
 
 const props = defineProps<{
@@ -94,21 +95,41 @@ function toggleCourseVisibility(courseId: string, setVisibilityTo = null) {
 
   nodeUpdates.push(
     ...props.coursesWithTopics
-      .filter(
-        (item) =>
+      .filter((item) => {
+        if (
+          selectedCourses.value.length === 0 ||
+          selectedCourses.value.length === props.courses.length
+        ) {
+          return item.course.id === courseId;
+        }
+
+        return (
           item.course.id === courseId &&
-          !isTopicAttachedToMultipleCourses(item.topic.id),
-      )
+          !isTopicAttachedToMultipleVisibleCourses(item.topic.id)
+        );
+      })
       .map((item) => ({ id: item.topic.id, hidden: !isCourseVisible })),
   );
 
   nodes.update(nodeUpdates);
 }
 
-function isTopicAttachedToMultipleCourses(topicId) {
+function isTopicAttachedToMultipleVisibleCourses(topicId): boolean {
+  let courseIdsTopicIsAttachedTo: string[] = props.coursesWithTopics
+    .filter((item) => item.topic.id === topicId)
+    .map((item) => item.course.id);
+
+  if (courseIdsTopicIsAttachedTo.length < 2) return false;
+
   return (
-    props.coursesWithTopics.filter((item) => item.topic.id === topicId).length >
-    1
+    nodes.get({
+      filter: function (node) {
+        return (
+          courseIdsTopicIsAttachedTo.includes(node.id) &&
+          (node.hidden === false || typeof node.hidden === 'undefined')
+        );
+      },
+    }).length > 1
   );
 }
 
@@ -161,7 +182,7 @@ onMounted(() => {
       <PillDiv v-for="course in courses">
         <input
           v-model="selectedCourses"
-          @click="toggleCourseVisibility(course.id)"
+          @change="toggleCourseVisibility(course.id)"
           class="input-checkbox mr-2"
           type="checkbox"
           :value="course.number"

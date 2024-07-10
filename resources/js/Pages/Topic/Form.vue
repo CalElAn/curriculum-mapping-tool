@@ -6,43 +6,24 @@
   >
     <p class="form-title mt-2 text-center">Topics</p>
     <div class="mt-6">
-      <div>
-        <label class="label block"> Select a course </label
-        ><select v-model="courseId" class="select mt-2 w-full">
-          <option value="" selected disabled>- select a course -</option>
-          <option v-for="course in courses" :value="course.id">
-            {{ course.number }} | {{ course.title }}
-          </option>
-        </select>
+      <div class="mb-2 mt-8 flex justify-end md:mt-8">
+        <AddButton @click="add()" :disabled="!shouldAllowAdd" class="mr-4">
+          Add a topic
+        </AddButton>
       </div>
-      <div class="form-title-div mt-8">
-        <span class="subform-title">Topics</span>
-        <AddButton
-          @click="add()"
-          class="self-center sm:mr-4"
-          :disabled="!shouldAllowAdd || !courseId"
-          >Add a topic</AddButton
-        >
-      </div>
-      <div class="mt-4 flex flex-wrap gap-x-5 gap-y-3 rounded-lg border p-4">
-        <Subform
-          v-for="(topic, index) in subformItems"
-          :key="topic"
-          :courseId="courseId"
-          :topic="topic"
-          :courseTopicEdgeWeights="courseTopicEdgeWeights"
-          :allTopicNames="allTopicNames"
-          @cancelAdd="onCancelAdd()"
-          @stored="
-            (eventArgs) =>
-              (shouldAllowAdd = true) && (allTopicNames = eventArgs.newNames)
-          "
-          @destroyed="onDestroyed(index)"
-        />
-        <p
-          v-if="courseId && (!subformItems || subformItems.length === 0)"
-          class="ml-2"
-        >
+      <div class="flex flex-col text-sm md:text-base">
+        <TransitionGroup name="list">
+          <Subform
+            v-for="(topic, index) in subformItems"
+            :key="topic"
+            :topic="topic"
+            @cancelAdd="onCancelAdd()"
+            @stored="shouldAllowAdd = true"
+            @destroyed="onDestroyed(index)"
+          />
+        </TransitionGroup>
+
+        <p v-if="!subformItems || subformItems.length === 0" class="ml-2">
           No topics found
         </p>
       </div>
@@ -51,41 +32,30 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue';
 import { Head } from '@inertiajs/vue3';
 import AddButton from '@/Components/AddButton.vue';
 import Subform from '@/Pages/Topic/Subform.vue';
 import { useFormHelpers } from '@/Helpers/formHelpers';
+import { provide } from 'vue';
 
 const props = defineProps<{
-  courses: Array<object>;
+  initialTopics: Array<object>;
+  allCourses: Array<object>;
   courseTopicEdgeWeights: Array<string>;
 }>();
 
-const courseId = ref('');
+provide('allCourses', props.allCourses);
+provide('courseTopicEdgeWeights', props.courseTopicEdgeWeights);
 
 const newTopic = {
   id: null,
   name: null,
-  coverage_level: null,
 };
 
-const allTopicNames = ref([]);
-
 const { subformItems, shouldAllowAdd, add, onCancelAdd, onDestroyed } =
-  useFormHelpers([], newTopic);
-
-watch(courseId, (newCourseId) => {
-  if (!courseId) {
-    subformItems.value = [];
-    return;
-  }
-
-  axios.get(route('topics.get_topics', newCourseId)).then((response) => {
-    subformItems.value = response.data.topics;
-    allTopicNames.value = response.data.allTopicNames;
-  });
-
-  shouldAllowAdd.value = true;
-});
+  useFormHelpers(props.initialTopics, newTopic);
 </script>
+
+<style scoped>
+@import '../../../css/subform_transition.css';
+</style>

@@ -11,6 +11,30 @@ use function WikibaseSolutions\CypherDSL\query;
 
 class Topic extends BaseGraphModel
 {
+    public static function getCourses(string $topicId): array
+    {
+        $results = static::client()->run(
+            <<<'CYPHER'
+            MATCH (c:Course)-[r_c:COVERS]->(:Topic {id: $topicId})
+            RETURN c, r_c
+            ORDER BY c.number
+            CYPHER
+            ,
+            ['topicId' => $topicId],
+        );
+
+        $courses = [];
+
+        foreach ($results as $result) {
+            $courses[] = [
+                ...$result->get('c')->getProperties(),
+                'covers' => $result->get('r_c')->getProperties(),
+            ];
+        }
+
+        return $courses;
+    }
+
     public static function getTopicsForCourse(string $courseId): array
     {
         $topicsResults = static::client()->run(

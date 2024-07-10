@@ -22,6 +22,20 @@ class BaseGraphModel
             ->build();
     }
 
+    public static function getAll(string $node, string $orderBy): array
+    {
+        $results = static::client()->run(
+            <<<CYPHER
+            MATCH (nodeVar:$node)
+            RETURN nodeVar
+            ORDER BY nodeVar.$orderBy
+            CYPHER
+            ,
+        );
+
+        return static::buildArrayFromResults($results, ['nodeVar']);
+    }
+
     public static function buildArrayFromResults(
         $results,
         array $keyValuePairs,
