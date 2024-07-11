@@ -2,7 +2,6 @@
 import { Head } from '@inertiajs/vue3';
 import { onMounted, ref, watch } from 'vue';
 import { DataSet, Network } from 'vis-network/standalone';
-import map from 'lodash/map';
 import PillDiv from '@/Components/PillDiv.vue';
 
 const props = defineProps<{
@@ -18,24 +17,39 @@ const selectAll = ref(true);
 
 watch(selectedCourses, (newSelectedCourses) => {
   if (newSelectedCourses.length === 0) selectAll.value = false;
+
+  if (newSelectedCourses.length === props.courses.length)
+    selectAll.value = true;
 });
 
 watch(selectAll, (newVal) => {
   if (newVal) {
-    selectedCourses.value.push(...props.courses.map((course) => course.number));
+    /* This second check is to prevent the "toggleCourseVisibility" function from being called twice.
+       Without the check, the function is called once when the last item is added to selectedCourses,
+       and again when the watcher on selectedCourses sets the value of selectAll to true*/
+    if (selectedCourses.value.length < props.courses.length) {
+      selectedCourses.value.push(
+        ...props.courses.map((course) => course.number),
+      );
 
-    props.courses.forEach((course) => {
-      toggleCourseVisibility(course.id, true);
-    });
+      props.courses.forEach((course) => {
+        toggleCourseVisibility(course.id, true);
+      });
+    }
 
     return;
   }
 
-  selectedCourses.value = [];
+  /* This check is also to prevent the "toggleCourseVisibility" function from being called twice.
+     Without the check, the function is called once when the last item is removed from selectedCourses,
+     and again when the watcher on selectedCourses sets the value of selectAll to false*/
+  if (selectedCourses.value.length > 0) {
+    selectedCourses.value = [];
 
-  props.courses.forEach((course) => {
-    toggleCourseVisibility(course.id, false);
-  });
+    props.courses.forEach((course) => {
+      toggleCourseVisibility(course.id, false);
+    });
+  }
 });
 
 let nodes = [];
@@ -83,15 +97,19 @@ edges = new DataSet(edges);
 function toggleCourseVisibility(courseId: string, setVisibilityTo = null) {
   let isCourseVisible = nodes.get(courseId).hidden;
 
-  if (typeof setVisibilityTo === 'boolean') {
-    isCourseVisible = setVisibilityTo;
-  } else {
-    if (typeof isCourseVisible === 'undefined' || isCourseVisible === false) {
-      isCourseVisible = false;
-    }
+  if (typeof isCourseVisible === 'undefined') {
+    isCourseVisible = false;
   }
 
-  let nodeUpdates = [{ id: courseId, hidden: !isCourseVisible }];
+  let shouldHideCourse;
+
+  if (typeof setVisibilityTo === 'boolean') {
+    shouldHideCourse = !setVisibilityTo;
+  } else {
+    shouldHideCourse = !isCourseVisible;
+  }
+
+  let nodeUpdates = [{ id: courseId, hidden: shouldHideCourse }];
 
   nodeUpdates.push(
     ...props.coursesWithTopics
@@ -108,7 +126,7 @@ function toggleCourseVisibility(courseId: string, setVisibilityTo = null) {
           !isTopicAttachedToMultipleVisibleCourses(item.topic.id)
         );
       })
-      .map((item) => ({ id: item.topic.id, hidden: !isCourseVisible })),
+      .map((item) => ({ id: item.topic.id, hidden: shouldHideCourse })),
   );
 
   nodes.update(nodeUpdates);

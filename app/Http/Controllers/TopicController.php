@@ -30,9 +30,7 @@ class TopicController extends Controller
             'courses' => BaseGraphModel::getUniqueResults(
                 array_column($coursesWithTopics, 'course'),
             ),
-            'topics' => BaseGraphModel::getUniqueResults(
-                array_column($coursesWithTopics, 'topic'),
-            ),
+            'topics' => BaseGraphModel::getAll('Topic', 'name'),
             'coursesWithTopics' => $coursesWithTopics,
             'courseTopicEdgeWeights' => CourseTopicEdgeWeights::cases(),
         ]);
