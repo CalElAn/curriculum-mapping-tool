@@ -27,54 +27,12 @@ class Topic extends BaseGraphModel
 
         foreach ($results as $result) {
             $courses[] = [
-                ...$result->get('c')->getProperties(),
-                'covers' => $result->get('r_c')->getProperties(),
+                ...$result->get('r_c')->getProperties(),
+                'course' => $result->get('c')->getProperties(),
             ];
         }
 
         return $courses;
-    }
-
-    public static function getTopicsForCourse(string $courseId): array
-    {
-        $topicsResults = static::client()->run(
-            <<<'CYPHER'
-            MATCH (:Course {id: $courseId})-[r_c:COVERS]->(t:Topic)
-            RETURN r_c, t
-            ORDER BY t.name
-            CYPHER
-            ,
-            ['courseId' => $courseId],
-        );
-
-        $topics = [];
-
-        foreach ($topicsResults as $result) {
-            $topics[] = [
-                'id' => $result->get('t')->getProperties()->get('id'),
-                'name' => $result->get('t')->getProperties()->get('name'),
-                'coverage_level' => $result
-                    ->get('r_c')
-                    ->getProperties()
-                    ->get('coverage_level'),
-            ];
-        }
-
-        return $topics;
-    }
-
-    public static function getAllTopicNames(): array
-    {
-        $topicNames = static::client()->run(
-            <<<'CYPHER'
-            MATCH (t:Topic)
-            RETURN t.name
-            ORDER BY t.name
-            CYPHER
-            ,
-        );
-
-        return static::buildArrayFromResults($topicNames, ['t.name']);
     }
 
     public static function create(string $name): string
@@ -109,7 +67,8 @@ class Topic extends BaseGraphModel
             $tsx->run(
                 <<<'CYPHER'
                 MATCH (t:Topic {id: $id})
-                SET t.name = $name
+                SET t.name = $name,
+                    t.updated_at = datetime()
                 CYPHER
                 ,
                 [

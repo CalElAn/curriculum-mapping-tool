@@ -21,22 +21,28 @@
       :adding="adding"
       :editing="editing"
       :viewing="viewing"
-      :viewingText="`Courses covering this topic`"
+      :viewingText="`Relationships`"
       :form="form"
     />
-    <template #viewingContainer>
-      <div
-        v-if="viewing && topic.id"
-        class="viewing-subform-container col-span-1 mt-2 flex flex-wrap gap-x-5 gap-y-3"
-      >
-        <CourseAllocationSubform
-          v-for="item in subformItems"
-          :key="item"
-          :courseData="item"
-          @cancelAdd="onCancelAdd()"
-          @stored="shouldAllowAdd = true"
-          @destroyed="onDestroyed(index)"
-        />
+    <template v-if="viewing && id" #viewingContainer>
+      <div class="viewing-subform-container">
+        <div>
+          <span class="subform-title">Courses covering this topic</span>
+        </div>
+        <div class="col-span-1 mt-4 flex flex-wrap gap-x-5 gap-y-3">
+          <AddButton @click="add()" :disabled="!shouldAllowAdd" class="my-auto">
+            Add a relationship
+          </AddButton>
+          <CourseAllocationSubform
+            v-for="(item, index) in subformItems"
+            :key="item"
+            :coversData="item"
+            :topicId="id"
+            @cancelAdd="onCancelAdd()"
+            @stored="shouldAllowAdd = true"
+            @destroyed="onDestroyed(index)"
+          />
+        </div>
       </div>
     </template>
   </SubformWrapper>
@@ -50,6 +56,7 @@ import { computed, ref, watch } from 'vue';
 import CourseAllocationSubform from '@/Pages/Topic/CourseAllocationSubform.vue';
 import { useFormHelpers } from '@/Helpers/formHelpers';
 import AllSubformButtons from '@/Components/AllSubformButtons.vue';
+import AddButton from '@/Components/AddButton.vue';
 
 const props = defineProps<{
   topic: Object;
@@ -74,11 +81,13 @@ const { id, form, adding, editing, store, update, destroy } = useSubformHelpers(
   'topics.destroy',
 );
 
-const newCoversRelationship = computed(() => ({
-  topic_id: id.value,
-  course: null,
-  coverage_level: null,
-}));
+const newCoversRelationship = {
+  id: null,
+  coverage_level: '',
+  course: {
+    id: '',
+  },
+};
 
 const { subformItems, shouldAllowAdd, add, onCancelAdd, onDestroyed } =
   useFormHelpers([], newCoversRelationship);

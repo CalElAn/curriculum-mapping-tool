@@ -22,6 +22,7 @@ export function useSubformHelpers(
 
   function store(): void {
     form.post(storeRoute, {
+      preserveScroll: true,
       onSuccess: () => {
         adding.value = false;
         id.value = usePage().props.session.data.id;
@@ -35,6 +36,7 @@ export function useSubformHelpers(
     form.patch(
       route(updateRouteName, [...initialUpdateRouteParams, id.value]),
       {
+        preserveScroll: true,
         onSuccess: () => {
           toast.fire({ title: `Saved!` });
         },
@@ -45,6 +47,7 @@ export function useSubformHelpers(
   function destroy(): void {
     deleteConfirmationDialog(() =>
       form.delete(route(destroyRouteName, id.value), {
+        preserveScroll: true,
         onSuccess: () => {
           emitFunction('destroyed');
           toast.fire({ title: `Deleted!` });

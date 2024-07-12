@@ -210,7 +210,7 @@ onMounted(() => {
     </div>
     <div
       id="graph-container"
-      class="xbg-gray-50 h-[40rem] rounded-lg border"
+      class="h-[40rem] rounded-lg border bg-gray-100"
     ></div>
   </div>
 </template>

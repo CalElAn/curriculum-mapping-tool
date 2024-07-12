@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CoversController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TopicController;
@@ -16,6 +17,12 @@ Route::patch('/topics/form/{id}', [TopicController::class, 'update'])->name('top
 Route::delete('/topics/form/{id}', [TopicController::class, 'destroy'])->name('topics.destroy');
 
 Route::get('/visualization/topics', [TopicController::class, 'visualization'])->name('topics.visualization');
+
+
+Route::post('/covers/form', [CoversController::class, 'store'])->name('covers.store');
+Route::patch('/covers/form/{id}', [CoversController::class, 'update'])->name('covers.update');
+Route::delete('/covers/form/{id}', [CoversController::class, 'destroy'])->name('covers.destroy');
+
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');

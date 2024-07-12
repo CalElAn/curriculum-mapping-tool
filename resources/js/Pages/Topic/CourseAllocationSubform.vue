@@ -1,14 +1,19 @@
 <template>
   <form
     @submit.prevent="store()"
-    class="rounded-xl border p-4 shadow-sm bg-white shadow"
+    class="rounded-xl border bg-white p-4 shadow shadow-sm"
     v-if="editing || adding"
     :class="{
       'subform-ring': adding,
     }"
   >
     <label class="label mt-2 block">Course</label>
-    <select required v-model="form.id" class="select mt-1 w-full">
+    <select
+      :disabled="editing"
+      required
+      v-model="form.course_id"
+      class="select mt-1 w-full"
+    >
       <option value="" selected disabled>- select course -</option>
       <option v-for="course in allCourses" :value="course.id">
         {{ course.number }}
@@ -42,7 +47,7 @@
       id="dropdownMenuIconButton"
       :data-dropdown-toggle="`dropdownDots${random}`"
       data-dropdown-placement="right"
-      class="xrounded-lg xbg-white xtext-center xtext-sm xfont-medium xhover:bg-gray-100 xfocus:outline-none xfocus:ring-4 xfocus:ring-gray-50 inline-flex items-center p-1 text-gray-900"
+      class="inline-flex items-center p-1 text-gray-900"
       type="button"
     >
       <EllipsisVerticalIcon class="h-5 w-5" />
@@ -66,7 +71,7 @@
           </button>
         </li>
       </ul>
-<!--      <div class="px-2">
+      <!--      <div class="px-2">
         <a
           href="#"
           class="block px-2 py-1 text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600 dark:hover:text-white"
@@ -84,10 +89,11 @@ import FormValidationErrors from '@/Components/FormValidationErrors.vue';
 import PillDiv from '@/Components/PillDiv.vue';
 import { emittedEvents, useSubformHelpers } from '@/Helpers/subformHelpers.js';
 import { initFlowbite } from 'flowbite';
-import { onMounted, watch, ref, computed, inject } from 'vue';
+import { onMounted, watch, computed, inject } from 'vue';
 
 const props = defineProps<{
-  courseData: Object;
+  coversData: Object;
+  topicId: String;
 }>();
 
 const courseTopicEdgeWeights: Array<string> = inject('courseTopicEdgeWeights');
@@ -96,22 +102,24 @@ const allCourses: Array<string> = inject('allCourses');
 const emit = defineEmits(emittedEvents);
 
 const useFormData = {
-  id: props.courseData.id,
-  coverage_level: props.courseData.covers.coverage_level ?? '',
+  id: props.coversData.id,
+  coverage_level: props.coversData.coverage_level ?? '',
+  course_id: props.coversData.course.id,
+  topic_id: props.topicId,
 };
 
 const { form, adding, editing, store, update, destroy, id } = useSubformHelpers(
-  props.courseData,
+  props.coversData,
   useFormData,
   emit,
-  route('topics.store', props.courseId),
-  'topics.update',
-  [props.courseId],
-  'topics.destroy',
+  route('covers.store'),
+  'covers.update',
+  [],
+  'covers.destroy',
 );
 
 const courseNumber = computed(
-  () => allCourses.find((course) => course.id === id.value)?.number,
+  () => allCourses.find((course) => course.id === form.course_id)?.number,
 );
 
 const random = Math.round(Math.random() * 10000);
