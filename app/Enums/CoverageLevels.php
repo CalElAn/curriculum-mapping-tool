@@ -2,7 +2,7 @@
 
 namespace App\Enums;
 
-enum CourseTopicEdgeWeights: string
+enum CoverageLevels: string
 {
     case BEGINNER = 'beginner';
     case INTERMEDIATE = 'intermediate';

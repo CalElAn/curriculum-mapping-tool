@@ -27,6 +27,40 @@ services:
             - meilisearch
             - mailpit
             - selenium
+    neo4j:
+        container_name: neo4j
+        image: neo4j:5.21
+        ports:
+            - 7474:7474
+            - 7687:7687
+        environment:
+            - NEO4J_AUTH=neo4j/${NEO4J_DB_PASSWORD}
+            - NEO4J_apoc_export_file_enabled=true
+            - NEO4J_apoc_import_file_enabled=true
+            - NEO4J_apoc_import_file_use__neo4j__config=true
+            - NEO4J_PLUGINS=["apoc", "graph-data-science"]
+        volumes:
+            - sail-neo4j-data:/data
+            - sail-neo4j-logs:/logs
+            - sail-neo4j-import:/var/lib/neo4j/import
+            - sail-neo4j-plugins:/plugins
+        networks:
+            - sail
+    # Ideally we should have only one neo4j container with different databases, but the community version can only have one database.
+    # Therefore, we have to create another container to house the test database.
+    neo4j-test:
+        container_name: neo4j-test
+        image: neo4j:5.21
+        ports:
+            - 8474:7474
+            - 8687:7687
+        environment:
+            - NEO4J_AUTH=none
+        volumes:
+            - sail-neo4j-test-data:/data
+            - sail-neo4j-test-logs:/logs
+        networks:
+            - sail
     mysql:
         image: 'mysql/mysql-server:8.0'
         ports:
@@ -105,6 +139,18 @@ networks:
         driver: bridge
 volumes:
     sail-mysql:
+        driver: local
+    sail-neo4j-data:
+        driver: local
+    sail-neo4j-logs:
+        driver: local
+    sail-neo4j-import:
+        driver: local
+    sail-neo4j-plugins:
+        driver: local
+    sail-neo4j-test-data:
+        driver: local
+    sail-neo4j-test-logs:
         driver: local
     sail-redis:
         driver: local

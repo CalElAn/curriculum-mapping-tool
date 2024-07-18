@@ -2,31 +2,46 @@
 
 namespace App\GraphModels;
 
+use Illuminate\Support\Str;
 use Laudis\Neo4j\Authentication\Authenticate;
 use Laudis\Neo4j\ClientBuilder;
 use Laudis\Neo4j\Contracts\ClientInterface;
+use Laudis\Neo4j\Contracts\TransactionInterface;
+use function WikibaseSolutions\CypherDSL\node;
+use function WikibaseSolutions\CypherDSL\query;
 
-class BaseGraphModel
+class GraphModel
 {
     public static function client(): ClientInterface
     {
         return ClientBuilder::create()
             ->withDriver(
-                'aura',
-                config('aura_db.url'),
+                'neo4j',
+                config('neo4j.url'),
                 Authenticate::basic(
-                    config('aura_db.username'),
-                    config('aura_db.password'),
+                    config('neo4j.username'),
+                    config('neo4j.password'),
                 ),
             )
             ->build();
     }
 
-    public static function getAll(string $node, string $orderBy): array
+    public static function runQueryInTransaction(
+        string $query,
+        iterable $parameters = [],
+    ): void {
+        static::client()->writeTransaction(static function (
+            TransactionInterface $tsx,
+        ) use ($query, $parameters) {
+            $tsx->run($query, $parameters);
+        });
+    }
+
+    public static function getAll(string $nodeLabel, string $orderBy): array
     {
         $results = static::client()->run(
             <<<CYPHER
-            MATCH (nodeVar:$node)
+            MATCH (nodeVar:$nodeLabel)
             RETURN nodeVar
             ORDER BY nodeVar.$orderBy
             CYPHER

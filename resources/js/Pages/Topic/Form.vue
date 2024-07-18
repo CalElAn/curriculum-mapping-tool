@@ -41,11 +41,11 @@ import { provide } from 'vue';
 const props = defineProps<{
   initialTopics: Array<object>;
   allCourses: Array<object>;
-  courseTopicEdgeWeights: Array<string>;
+  coverageLevels: Array<string>;
 }>();
 
 provide('allCourses', props.allCourses);
-provide('courseTopicEdgeWeights', props.courseTopicEdgeWeights);
+provide('coverageLevels', props.coverageLevels);
 
 const newTopic = {
   id: null,

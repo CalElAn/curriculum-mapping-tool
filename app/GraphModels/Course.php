@@ -2,8 +2,10 @@
 
 namespace App\GraphModels;
 
-class Course extends BaseGraphModel
+class Course extends Node
 {
+    public static string $label = 'Course';
+
     public static function getAllWithTopics(): array
     {
         $results = static::client()->run(

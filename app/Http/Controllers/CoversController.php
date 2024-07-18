@@ -10,18 +10,18 @@ class CoversController extends Controller
 {
     public function store(Request $request): RedirectResponse
     {
-        $id = Covers::create(
-            $request->course_id,
-            $request->topic_id,
-            $request->coverage_level,
-        );
+        $id = Covers::create($request->course_id, $request->topic_id, [
+            'coverage_level' => $request->coverage_level,
+        ]);
 
         return back()->with('data', ['id' => $id]);
     }
 
     public function update(Request $request, string $id): RedirectResponse
     {
-        Covers::update($id, $request->coverage_level);
+        Covers::update($id, [
+            'coverage_level' => $request->coverage_level,
+        ]);
 
         return back();
     }

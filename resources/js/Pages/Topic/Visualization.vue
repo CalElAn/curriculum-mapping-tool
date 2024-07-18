@@ -8,7 +8,7 @@ const props = defineProps<{
   courses: Array<object>;
   topics: Array<object>;
   coursesWithTopics: Array<object>;
-  courseTopicEdgeWeights: Array<string>;
+  coverageLevels: Array<string>;
 }>();
 
 const allCourses: Array<Number> = props.courses.map((course) => course.number);
@@ -86,9 +86,7 @@ edges.push(
     from: courseData.course.id,
     to: courseData.topic.id,
     label: `${courseData.covers.coverage_level}`,
-    value:
-      props.courseTopicEdgeWeights.indexOf(courseData.covers.coverage_level) +
-      1,
+    value: props.coverageLevels.indexOf(courseData.covers.coverage_level) + 1,
   })),
 );
 

@@ -28,5 +28,9 @@
         <env name="QUEUE_CONNECTION" value="sync"/>
         <env name="SESSION_DRIVER" value="array"/>
         <env name="TELESCOPE_ENABLED" value="false"/>
+        <!--  neo4j-test is the name of the container. You can also use its ip address -->
+        <env name="NEO4J_DB_URL" value="neo4j://neo4j-test:7687"/>
+        <env name="NEO4J_DB_USERNAME" value=""/>
+        <env name="NEO4J_DB_PASSWORD" value=""/>
     </php>
 </phpunit>

@@ -22,8 +22,8 @@
     <label class="label mt-4 block">Coverage level</label>
     <select required v-model="form.coverage_level" class="select mt-1 w-full">
       <option value="" selected disabled>- select coverage level -</option>
-      <option v-for="weight in courseTopicEdgeWeights">
-        {{ weight }}
+      <option v-for="coverageLevel in coverageLevels">
+        {{ coverageLevel }}
       </option>
     </select>
     <FormValidationErrors class="mt-2 sm:col-span-full" :errors="form.errors" />
@@ -96,7 +96,7 @@ const props = defineProps<{
   topicId: String;
 }>();
 
-const courseTopicEdgeWeights: Array<string> = inject('courseTopicEdgeWeights');
+const coverageLevels: Array<string> = inject('coverageLevels');
 const allCourses: Array<string> = inject('allCourses');
 
 const emit = defineEmits(emittedEvents);

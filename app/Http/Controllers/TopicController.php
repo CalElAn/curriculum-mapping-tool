@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\CourseTopicEdgeWeights;
-use App\GraphModels\BaseGraphModel;
+use App\Enums\CoverageLevels;
+use App\GraphModels\GraphModel;
 use App\GraphModels\Course;
 use App\GraphModels\Topic;
 use Illuminate\Http\RedirectResponse;
@@ -16,9 +16,9 @@ class TopicController extends Controller
     public function form(): Response
     {
         return Inertia::render('Topic/Form', [
-            'initialTopics' => BaseGraphModel::getAll('Topic', 'name'),
-            'allCourses' => BaseGraphModel::getAll('Course', 'number'),
-            'courseTopicEdgeWeights' => CourseTopicEdgeWeights::cases(),
+            'initialTopics' => Topic::all('name'),
+            'allCourses' => Course::all('number'),
+            'coverageLevels' => CoverageLevels::cases(),
         ]);
     }
 
@@ -27,12 +27,12 @@ class TopicController extends Controller
         $coursesWithTopics = Course::getAllWithTopics();
 
         return Inertia::render('Topic/Visualization', [
-            'courses' => BaseGraphModel::getUniqueResults(
+            'courses' => GraphModel::getUniqueResults(
                 array_column($coursesWithTopics, 'course'),
             ),
-            'topics' => BaseGraphModel::getAll('Topic', 'name'),
+            'topics' => Topic::all('name'),
             'coursesWithTopics' => $coursesWithTopics,
-            'courseTopicEdgeWeights' => CourseTopicEdgeWeights::cases(),
+            'coverageLevels' => CoverageLevels::cases(),
         ]);
     }
 
@@ -43,14 +43,14 @@ class TopicController extends Controller
 
     public function store(Request $request): RedirectResponse
     {
-        $id = Topic::create($request->name);
+        $id = Topic::create(['name' => $request->name]);
 
         return back()->with('data', ['id' => $id]);
     }
 
     public function update(Request $request, string $id): RedirectResponse
     {
-        Topic::update($id, $request->name);
+        Topic::update($id, ['name' => $request->name]);
 
         return back();
     }
