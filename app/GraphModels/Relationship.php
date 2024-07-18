@@ -105,11 +105,7 @@ abstract class Relationship extends GraphModel
             );
         }
 
-        $query->set(
-            $relationship
-                ->property('updated_at')
-                ->replaceWith(Procedure::datetime()),
-        );
+        static::setUpdatedAt($query, $relationship);
 
         static::runQueryInTransaction($query->build());
     }
@@ -129,4 +125,5 @@ abstract class Relationship extends GraphModel
             ],
         );
     }
+
 }

@@ -75,9 +75,7 @@ class Node extends GraphModel
             $query->set($node->property($property)->replaceWith($value));
         }
 
-        $query->set(
-            $node->property('updated_at')->replaceWith(Procedure::datetime()),
-        );
+        static::setUpdatedAt($query, $node);
 
         static::runQueryInTransaction($query->build());
     }
