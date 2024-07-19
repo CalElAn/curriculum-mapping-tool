@@ -1,10 +1,10 @@
 <template>
-  <Head title="Data Entry | Topics" />
+  <Head title="Data Entry | Courses" />
 
   <div
     class="base-card xmt-6 w-full px-4 py-4 text-sm md:w-11/12 md:text-base xl:px-10"
   >
-    <p class="form-title mt-2 text-center">Topics</p>
+    <p class="form-title mt-2 text-center">Courses</p>
     <div class="mt-6">
       <div class="mb-2 mt-8 flex items-center justify-between md:mt-8">
         <div
@@ -18,16 +18,16 @@
             type="text"
           />
         </div>
-        <AddButton @click="add()" :disabled="!shouldAllowAdd" class="mr-4 font-semibold">
-          Add a topic
-        </AddButton>
+<!--        <AddButton @click="add()" :disabled="!shouldAllowAdd" class="mr-4 font-semibold">
+          Add a course
+        </AddButton>-->
       </div>
       <div class="flex flex-col text-sm md:text-base">
         <TransitionGroup name="list">
           <Subform
-            v-for="(topic, index) in subformItems"
-            :key="topic"
-            :topic="topic"
+            v-for="(course, index) in subformItems"
+            :key="course"
+            :course="course"
             @cancelAdd="onCancelAdd()"
             @stored="shouldAllowAdd = true"
             @destroyed="onDestroyed(index)"
@@ -35,12 +35,12 @@
         </TransitionGroup>
 
         <p v-if="!subformItems || subformItems.length === 0" class="ml-2">
-          No topics found
+          No courses found
         </p>
       </div>
       <Pagination
         class="mt-6 flex w-11/12 justify-start"
-        :links="initialTopics.links"
+        :links="initialCourses.links"
       />
     </div>
   </div>
@@ -50,7 +50,7 @@
 import { MagnifyingGlassIcon } from '@heroicons/vue/24/solid';
 import { Head } from '@inertiajs/vue3';
 import AddButton from '@/Components/AddButton.vue';
-import Subform from '@/Pages/Topic/Subform.vue';
+import Subform from '@/Pages/Course/Subform.vue';
 import { useFormHelpers } from '@/Helpers/formHelpers';
 import { provide, ref, watch } from 'vue';
 import Pagination from '@/Components/Pagination.vue';
@@ -58,29 +58,30 @@ import throttle from 'lodash/throttle';
 import { getFilteredItems } from '@/Helpers/helpers';
 
 const props = defineProps<{
-  initialTopics: Object;
-  allCourses: Array<object>;
+  initialCourses: Object;
+  allTopics: Array<object>;
   coverageLevels: Array<string>;
   filter: string | null;
 }>();
 
-provide('allCourses', props.allCourses);
+provide('allTopics', props.allTopics);
 provide('coverageLevels', props.coverageLevels);
 
 const filter = ref(props.filter);
 
 watch(
   filter,
-  throttle(() => getFilteredItems(route('topics.form'), filter.value), 150),
+  throttle(() => getFilteredItems(route('courses.form'), filter.value), 150),
 );
 
-const newTopic = {
+const newCourse = {
   id: null,
-  name: null,
+  number: null,
+  title: null,
 };
 
 const { subformItems, shouldAllowAdd, add, onCancelAdd, onDestroyed } =
-  useFormHelpers(props.initialTopics.data, newTopic);
+  useFormHelpers(props.initialCourses.data, newCourse);
 </script>
 
 <style scoped>

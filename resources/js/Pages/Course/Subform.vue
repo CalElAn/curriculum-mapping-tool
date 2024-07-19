@@ -1,13 +1,14 @@
 <template>
   <SubformWrapper @submit.prevent="store()" :adding="adding" class="">
+    <input readonly type="text" class="input  col-span-full w-full" v-model="form.number">
     <textarea
-      :readonly="!editing && !adding"
+      readonly
       rows="2"
       placeholder="name"
       required
       class="input col-span-full w-full"
       type="text"
-      v-model="form.name"
+      v-model="form.title"
     ></textarea>
     <FormValidationErrors class="sm:col-span-full" :errors="form.errors" />
     <AllSubformButtons
@@ -18,8 +19,8 @@
       @cancelEditing="editing = false"
       @edit="editing = true"
       @toggleViewing="viewing = !viewing"
-      :adding="adding"
-      :editing="editing"
+      :adding="false"
+      :editing="false"
       :viewing="viewing"
       :viewingText="`Relationships`"
       :form="form"
@@ -27,17 +28,17 @@
     <template v-if="viewing && id" #viewingContainer>
       <div class="viewing-subform-container">
         <div>
-          <span class="subform-title">Courses covering this topic</span>
+          <span class="subform-title">Topics covered by this course</span>
         </div>
         <div class="col-span-1 mt-4 flex flex-wrap gap-x-5 gap-y-3">
-          <AddButton @click="add()" :disabled="!shouldAllowAdd" class="my-auto text-sm">
+          <AddButton @click="add()" :disabled="!shouldAllowAdd" class="my-auto  text-sm">
             Add a relationship
           </AddButton>
-          <CoversSubform
+          <CourseAllocationSubform
             v-for="(item, index) in subformItems"
             :key="item"
             :coversData="item"
-            :topicId="id"
+            :courseId="id"
             @cancelAdd="onCancelAdd()"
             @stored="shouldAllowAdd = true"
             @destroyed="onDestroyed(index)"
@@ -53,38 +54,39 @@ import SubformWrapper from '@/Components/SubformWrapper.vue';
 import FormValidationErrors from '@/Components/FormValidationErrors.vue';
 import { emittedEvents, useSubformHelpers } from '@/Helpers/subformHelpers.js';
 import { computed, ref, watch } from 'vue';
-import CoversSubform from '@/Pages/Topic/CoversSubform.vue';
+import CourseAllocationSubform from '@/Pages/Course/CoversSubform.vue';
 import { useFormHelpers } from '@/Helpers/formHelpers';
 import AllSubformButtons from '@/Components/AllSubformButtons.vue';
 import AddButton from '@/Components/AddButton.vue';
 
 const props = defineProps<{
-  topic: Object;
+  course: Object;
 }>();
 
 const viewing = ref(false);
 
 const formData = {
-  id: props.topic.id,
-  name: props.topic.name,
+  id: props.course.id,
+  number: props.course.number,
+  title: props.course.title,
 };
 
 const emit = defineEmits(emittedEvents);
 
 const { id, form, adding, editing, store, update, destroy } = useSubformHelpers(
-  props.topic,
+  props.course,
   formData,
   emit,
-  route('topics.store'),
-  'topics.update',
+  route('courses.store'),
+  'courses.update',
   [],
-  'topics.destroy',
+  'courses.destroy',
 );
 
 const newCoversRelationship = {
   id: null,
   coverage_level: '',
-  course: {
+  topic: {
     id: '',
   },
 };
@@ -98,7 +100,7 @@ watch(viewing, (shouldView) => {
     return;
   }
 
-  axios.get(route('topics.get_courses', id.value)).then((response) => {
+  axios.get(route('courses.get_topics', id.value)).then((response) => {
     subformItems.value = response.data;
   });
 });

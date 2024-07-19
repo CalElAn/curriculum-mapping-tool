@@ -6,6 +6,7 @@ use App\Enums\CoverageLevels;
 use App\GraphModels\GraphModel;
 use App\GraphModels\Course;
 use App\GraphModels\Topic;
+use App\Http\Helpers\Helpers;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -24,22 +25,7 @@ class TopicController extends Controller
                 ->get()
             : Topic::all('name');
 
-        $page = $request->page;
-
-        $pageName = 'page';
-        $page = $page ?: LengthAwarePaginator::resolveCurrentPage($pageName);
-        $perPage = 5;
-
-        $initialTopics = (new LengthAwarePaginator(
-            $initialTopics->forPage($page, $perPage),
-            $initialTopics->count(),
-            $perPage,
-            $page,
-            [
-                'path' => LengthAwarePaginator::resolveCurrentPath(),
-                'pageName' => $pageName,
-            ],
-        ))->withQueryString();
+        $initialTopics = Helpers::paginate($request->page, $initialTopics);
 
         return Inertia::render('Topic/Form', [
             'initialTopics' => $initialTopics,

@@ -1,6 +1,6 @@
 <template>
   <Link
-    :href="route('topics.form')"
+    :href="routeUrl"
     class="inline-block rounded-t-lg border-b-2 p-4 tracking-wide"
     :class="[
       $page.url.includes(activeIfIncludes)
@@ -14,8 +14,13 @@
 <script setup>
 import { Link } from '@inertiajs/vue3';
 
-defineProps({
+const props = defineProps({
   title: String,
   activeIfIncludes: String,
 });
+
+const routeUrl = {
+  Courses: route('courses.form'),
+  Topics: route('topics.form'),
+}[props.title];
 </script>

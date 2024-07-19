@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CourseController;
 use App\Http\Controllers\CoversController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
@@ -17,6 +18,12 @@ Route::patch('/topics/form/{id}', [TopicController::class, 'update'])->name('top
 Route::delete('/topics/form/{id}', [TopicController::class, 'destroy'])->name('topics.destroy');
 
 Route::get('/visualization/topics', [TopicController::class, 'visualization'])->name('topics.visualization');
+
+Route::get('/data-entry/courses/form', [CourseController::class, 'form'])->name('courses.form');
+Route::get('/courses/form/{courseId}/get-topics', [CourseController::class, 'getTopics'])->name('courses.get_topics');
+Route::post('/courses/form', [CourseController::class, 'store'])->name('courses.store');
+Route::patch('/courses/form/{id}', [CourseController::class, 'update'])->name('courses.update');
+Route::delete('/courses/form/{id}', [CourseController::class, 'destroy'])->name('courses.destroy');
 
 
 Route::post('/covers/form', [CoversController::class, 'store'])->name('covers.store');

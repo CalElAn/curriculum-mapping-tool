@@ -5,6 +5,7 @@ namespace App\GraphModels;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Laudis\Neo4j\Types\CypherMap;
+use WikibaseSolutions\CypherDSL\Clauses\WhereClause;
 use WikibaseSolutions\CypherDSL\Expressions\Procedures\Procedure;
 use function WikibaseSolutions\CypherDSL\node;
 use function WikibaseSolutions\CypherDSL\query;
@@ -51,19 +52,23 @@ class Node extends GraphModel
         return new static();
     }
 
-    public static function where(array $propertyOperatorValues): static
-    {
+    public static function where(
+        array $propertyOperatorValues,
+        bool $and = true,
+    ): static {
         $node = static::node()->withVariable(self::$nodeVar);
 
         $query = query()->match($node);
 
+        $whereClauses = [];
+
         foreach ($propertyOperatorValues as $propertyOperatorValue) {
-            $query->where(
-                $node
-                    ->property($propertyOperatorValue[0])
-                    ->{$propertyOperatorValue[1]}($propertyOperatorValue[2]),
-            );
+            $whereClauses[] = $node
+                ->property($propertyOperatorValue[0])
+                ->{$propertyOperatorValue[1]}($propertyOperatorValue[2]); //TODO how to make this a raw stmnt so toLower can be added to both sides
         }
+
+        $query->where($whereClauses, $and ? WhereClause::AND : WhereClause::OR);
 
         $query->returning($node);
 
