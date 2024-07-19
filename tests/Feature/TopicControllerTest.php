@@ -25,7 +25,7 @@ class TopicControllerTest extends TestCase
             ->assertInertia(
                 fn(Assert $page) => $page
                     ->component('Topic/Form')
-                    ->has('initialTopics', 5)
+                    ->has('initialTopics.data', 5)
                     ->has('allCourses', 7)
                     ->has('coverageLevels'),
             );

@@ -22,7 +22,7 @@ export function useFormHelpers(
     shouldAllowAdd.value = true;
   }
 
-  function onDestroyed(index): void {
+  function onDestroyed(index: Number): void {
     remove(subformItems.value, (item, itemIndex) => itemIndex === index);
   }
 

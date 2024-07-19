@@ -6,7 +6,18 @@
   >
     <p class="form-title mt-2 text-center">Topics</p>
     <div class="mt-6">
-      <div class="mb-2 mt-8 flex justify-end md:mt-8">
+      <div class="mb-2 mt-8 flex items-center justify-between md:mt-8">
+        <div
+          class="flex w-3/5 justify-center gap-1 sm:flex-row sm:items-center xl:gap-4 xl:text-base"
+        >
+          <MagnifyingGlassIcon class="hidden h-6 w-6 text-gray-500 sm:block" />
+          <input
+            v-model="filter"
+            class="input w-full shadow-sm sm:grow"
+            placeholder="Search..."
+            type="text"
+          />
+        </div>
         <AddButton @click="add()" :disabled="!shouldAllowAdd" class="mr-4">
           Add a topic
         </AddButton>
@@ -27,25 +38,41 @@
           No topics found
         </p>
       </div>
+      <Pagination
+        class="mt-6 flex w-11/12 justify-start"
+        :links="initialTopics.links"
+      />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { MagnifyingGlassIcon } from '@heroicons/vue/24/solid';
 import { Head } from '@inertiajs/vue3';
 import AddButton from '@/Components/AddButton.vue';
 import Subform from '@/Pages/Topic/Subform.vue';
 import { useFormHelpers } from '@/Helpers/formHelpers';
-import { provide } from 'vue';
+import { provide, ref, watch } from 'vue';
+import Pagination from '@/Components/Pagination.vue';
+import throttle from 'lodash/throttle';
+import { getFilteredItems } from '@/Helpers/helpers';
 
 const props = defineProps<{
-  initialTopics: Array<object>;
+  initialTopics: Object;
   allCourses: Array<object>;
   coverageLevels: Array<string>;
+  filter: string | null;
 }>();
 
 provide('allCourses', props.allCourses);
 provide('coverageLevels', props.coverageLevels);
+
+const filter = ref(props.filter);
+
+watch(
+  filter,
+  throttle(() => getFilteredItems(route('topics.form'), filter.value), 150),
+);
 
 const newTopic = {
   id: null,
@@ -53,7 +80,7 @@ const newTopic = {
 };
 
 const { subformItems, shouldAllowAdd, add, onCancelAdd, onDestroyed } =
-  useFormHelpers(props.initialTopics, newTopic);
+  useFormHelpers(props.initialTopics.data, newTopic);
 </script>
 
 <style scoped>

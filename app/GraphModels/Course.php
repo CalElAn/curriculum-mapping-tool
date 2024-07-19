@@ -2,11 +2,13 @@
 
 namespace App\GraphModels;
 
+use Illuminate\Support\Collection;
+
 class Course extends Node
 {
     public static string $label = 'Course';
 
-    public static function getAllWithTopics(): array
+    public static function getAllWithTopics(): Collection
     {
         $results = static::client()->run(
             <<<'CYPHER'
@@ -17,7 +19,7 @@ class Course extends Node
             ,
         );
 
-        return static::buildArrayFromResults($results, [
+        return static::buildCollectionFromResults($results, [
             'course' => 'c',
             'covers' => 'r_c',
             'topic' => 't',

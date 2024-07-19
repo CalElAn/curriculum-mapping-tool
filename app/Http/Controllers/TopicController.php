@@ -8,17 +8,44 @@ use App\GraphModels\Course;
 use App\GraphModels\Topic;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class TopicController extends Controller
 {
-    public function form(): Response
+    public function form(Request $request): Response
     {
+        $filter = $request->filter;
+
+        $initialTopics = $filter
+            ? Topic::where([['name', 'contains', $filter]])
+                ->orderBy('name')
+                ->get()
+            : Topic::all('name');
+
+        $page = $request->page;
+
+        $pageName = 'page';
+        $page = $page ?: LengthAwarePaginator::resolveCurrentPage($pageName);
+        $perPage = 5;
+
+        $initialTopics = (new LengthAwarePaginator(
+            $initialTopics->forPage($page, $perPage),
+            $initialTopics->count(),
+            $perPage,
+            $page,
+            [
+                'path' => LengthAwarePaginator::resolveCurrentPath(),
+                'pageName' => $pageName,
+            ],
+        ))->withQueryString();
+
         return Inertia::render('Topic/Form', [
-            'initialTopics' => Topic::all('name'),
+            'initialTopics' => $initialTopics,
             'allCourses' => Course::all('number'),
             'coverageLevels' => CoverageLevels::cases(),
+            'filter' => $filter,
         ]);
     }
 
@@ -28,7 +55,7 @@ class TopicController extends Controller
 
         return Inertia::render('Topic/Visualization', [
             'courses' => GraphModel::getUniqueResults(
-                array_column($coursesWithTopics, 'course'),
+                array_column($coursesWithTopics->toArray(), 'course'),
             ),
             'topics' => Topic::all('name'),
             'coursesWithTopics' => $coursesWithTopics,

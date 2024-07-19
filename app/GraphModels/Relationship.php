@@ -2,6 +2,7 @@
 
 namespace App\GraphModels;
 
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use WikibaseSolutions\CypherDSL\Expressions\Procedures\Procedure;
 use function WikibaseSolutions\CypherDSL\node;
@@ -32,7 +33,7 @@ abstract class Relationship extends GraphModel
             ->getProperties();
     }
 
-    public static function all(?string $orderBy = null): array
+    public static function all(?string $orderBy = null): Collection
     {
         $relationship = relationshipTo()
             ->withTypes([static::$label])
@@ -48,7 +49,7 @@ abstract class Relationship extends GraphModel
 
         $results = static::client()->run($query->build());
 
-        return static::buildArrayFromResults($results, [$relationshipVar]);
+        return static::buildCollectionFromResults($results, [$relationshipVar]);
     }
 
     public static function create(

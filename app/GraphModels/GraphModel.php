@@ -2,6 +2,7 @@
 
 namespace App\GraphModels;
 
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Laudis\Neo4j\Authentication\Authenticate;
 use Laudis\Neo4j\ClientBuilder;
@@ -41,7 +42,7 @@ class GraphModel
         });
     }
 
-    public static function getAll(string $nodeLabel, string $orderBy): array
+    public static function getAll(string $nodeLabel, string $orderBy): Collection
     {
         $results = static::client()->run(
             <<<CYPHER
@@ -52,13 +53,14 @@ class GraphModel
             ,
         );
 
-        return static::buildArrayFromResults($results, ['nodeVar']);
+        return static::buildCollectionFromResults($results, ['nodeVar']);
     }
 
-    public static function buildArrayFromResults(
+    public static function buildCollectionFromResults(
         $results,
         array $keyValuePairs,
-    ): array {
+    ): Collection
+    {
         $resultsArray = [];
 
         foreach ($results as $result) {
@@ -83,10 +85,10 @@ class GraphModel
             }
         }
 
-        return $resultsArray;
+        return collect($resultsArray);
     }
 
-    public static function getUniqueResults($results): array
+    public static function getUniqueResults($results): Collection
     {
         $uniqueResults = [];
         $uniqueResultIds = [];
@@ -98,7 +100,7 @@ class GraphModel
             }
         }
 
-        return $uniqueResults;
+        return collect($uniqueResults);
     }
 
     public static function setUpdatedAt(
