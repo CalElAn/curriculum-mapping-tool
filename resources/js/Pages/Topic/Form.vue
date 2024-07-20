@@ -12,7 +12,7 @@
         <div
           class="flex w-full justify-center gap-1 sm:w-3/5 sm:flex-row sm:items-center xl:gap-4 xl:text-base"
         >
-          <MagnifyingGlassIcon class="hidden h-6 w-6 text-gray-500 sm:block" />
+          <MagnifyingGlassIcon class="hidden h-5 w-5 text-gray-500 sm:block" />
           <input
             v-model="filter"
             class="input w-full shadow-sm sm:grow"

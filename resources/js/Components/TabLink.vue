@@ -22,5 +22,6 @@ const props = defineProps({
 const routeUrl = {
   Courses: route('courses.form'),
   Topics: route('topics.form'),
+  'Knowledge Areas': '#',
 }[props.title];
 </script>

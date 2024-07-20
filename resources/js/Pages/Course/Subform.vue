@@ -108,6 +108,7 @@ watch(viewing, (shouldView) => {
 
   axios.get(route('courses.get_topics', id.value)).then((response) => {
     subformItems.value = response.data;
+    shouldAllowAdd.value = true
   });
 });
 </script>

@@ -11,7 +11,7 @@
           class="flex w-full flex-row items-center justify-center gap-1 xsm:w-4/5 xl:gap-4 xl:text-base"
         >
           <MagnifyingGlassIcon
-            class="h-4 w-4 text-gray-500 sm:block sm:h-6 sm:w-6"
+            class="h-4 w-4 text-gray-500 sm:block sm:h-5 sm:w-5"
           />
           <input
             v-model="filter"
