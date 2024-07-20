@@ -21,7 +21,7 @@ class GraphModel
     {
         return ClientBuilder::create()
             ->withDriver(
-                'neo4j',
+                'aura',
                 config('neo4j.url'),
                 Authenticate::basic(
                     config('neo4j.username'),

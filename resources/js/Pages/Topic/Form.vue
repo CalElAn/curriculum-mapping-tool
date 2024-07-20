@@ -6,9 +6,11 @@
   >
     <p class="form-title mt-2 text-center">Topics</p>
     <div class="mt-6">
-      <div class="mb-2 mt-8 flex items-center justify-between md:mt-8">
+      <div
+        class="mb-2 mt-8 flex flex-col items-center justify-between gap-y-3 sm:flex-row md:mt-8"
+      >
         <div
-          class="flex w-3/5 justify-center gap-1 sm:flex-row sm:items-center xl:gap-4 xl:text-base"
+          class="flex w-full justify-center gap-1 sm:w-3/5 sm:flex-row sm:items-center xl:gap-4 xl:text-base"
         >
           <MagnifyingGlassIcon class="hidden h-6 w-6 text-gray-500 sm:block" />
           <input
@@ -21,7 +23,7 @@
         <AddButton
           @click="add()"
           :disabled="!shouldAllowAdd"
-          class="mr-4 font-semibold"
+          class="w-full font-semibold sm:mr-4 sm:w-fit"
         >
           Add a topic
         </AddButton>

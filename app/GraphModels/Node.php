@@ -54,22 +54,26 @@ class Node extends GraphModel
     }
 
     public static function where(
-        array $propertyOperatorValues,
-        bool $and = true,
+        array $whereClauses,
+        string $operator = 'AND',
     ): static {
+        /* $whereClauses should be an array of arrays where each array has 3 values and is of the format
+         [property, operator, value]*/
+
         $node = static::node()->withVariable(self::$nodeVar);
 
         $query = query()->match($node);
 
-        $whereClauses = [];
+        $nodeVar = self::$nodeVar;
+        $parsedWhereClauses = [];
 
-        foreach ($propertyOperatorValues as $propertyOperatorValue) {
-            $whereClauses[] = $node
-                ->property($propertyOperatorValue[0])
-                ->{$propertyOperatorValue[1]}($propertyOperatorValue[2]); //TODO how to make this a raw stmnt so toLower can be added to both sides
+        foreach ($whereClauses as $whereClause) {
+            $parsedWhereClauses[] = "(LOWER(toString($nodeVar.$whereClause[0])) $whereClause[1] LOWER(toString('$whereClause[2]')))";
         }
 
-        $query->where($whereClauses, $and ? WhereClause::AND : WhereClause::OR);
+        $parsedWhereClauses = implode(" $operator ", $parsedWhereClauses);
+
+        $query->raw('WHERE', "($parsedWhereClauses)");
 
         $query->returning($node);
 

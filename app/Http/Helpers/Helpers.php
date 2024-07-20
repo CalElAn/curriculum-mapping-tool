@@ -14,7 +14,7 @@ class Helpers
     ): LengthAwarePaginator {
         $pageName = 'page';
         $page = $page ?: LengthAwarePaginator::resolveCurrentPage($pageName);
-        $perPage = 5;
+        $perPage = 7;
 
         return (new LengthAwarePaginator(
             $initialTopics->forPage($page, $perPage),

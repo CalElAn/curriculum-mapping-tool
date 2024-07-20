@@ -8,12 +8,14 @@
     <div class="mt-6">
       <div class="mb-2 mt-8 flex items-center justify-between md:mt-8">
         <div
-          class="flex w-3/5 justify-center gap-1 sm:flex-row sm:items-center xl:gap-4 xl:text-base"
+          class="flex w-full flex-row items-center justify-center gap-1 xsm:w-4/5 xl:gap-4 xl:text-base"
         >
-          <MagnifyingGlassIcon class="hidden h-6 w-6 text-gray-500 sm:block" />
+          <MagnifyingGlassIcon
+            class="h-4 w-4 text-gray-500 sm:block sm:h-6 sm:w-6"
+          />
           <input
             v-model="filter"
-            class="input w-full shadow-sm sm:grow"
+            class="input w-full shadow-sm"
             placeholder="Search..."
             type="text"
           />

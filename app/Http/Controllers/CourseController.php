@@ -25,7 +25,7 @@ class CourseController extends Controller
                     ['number', 'contains', $filter],
                     ['title', 'contains', $filter],
                 ],
-                false,
+                'OR',
             )
                 ->orderBy('number')
                 ->get()
