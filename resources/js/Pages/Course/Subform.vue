@@ -1,6 +1,11 @@
 <template>
   <SubformWrapper @submit.prevent="store()" :adding="adding" class="">
-    <input readonly type="text" class="input  col-span-full w-full" v-model="form.number">
+    <input
+      readonly
+      type="text"
+      class="input col-span-full w-full"
+      v-model="form.number"
+    />
     <textarea
       readonly
       rows="2"
@@ -11,27 +16,27 @@
       v-model="form.title"
     ></textarea>
     <FormValidationErrors class="sm:col-span-full" :errors="form.errors" />
-    <AllSubformButtons
-      class=""
-      @cancelAdd="$emit('cancelAdd')"
-      @save="update()"
-      @delete="destroy()"
-      @cancelEditing="editing = false"
-      @edit="editing = true"
-      @toggleViewing="viewing = !viewing"
-      :adding="false"
-      :editing="false"
-      :viewing="viewing"
-      :viewingText="`Relationships`"
-      :form="form"
-    />
+    <div class="flex justify-end sm:col-span-full sm:mr-4">
+      <SubformButton
+        iconType="view"
+        :shouldRotateIcon="viewing"
+        @click="viewing = !viewing"
+        class=""
+      >
+        {{ viewing ? '' : `Relationships` }}
+      </SubformButton>
+    </div>
     <template v-if="viewing && id" #viewingContainer>
       <div class="viewing-subform-container">
         <div>
           <span class="subform-title">Topics covered by this course</span>
         </div>
         <div class="col-span-1 mt-4 flex flex-wrap gap-x-5 gap-y-3">
-          <AddButton @click="add()" :disabled="!shouldAllowAdd" class="my-auto  text-sm">
+          <AddButton
+            @click="add()"
+            :disabled="!shouldAllowAdd"
+            class="my-auto text-sm"
+          >
             Add a relationship
           </AddButton>
           <CourseAllocationSubform
@@ -58,6 +63,7 @@ import CourseAllocationSubform from '@/Pages/Course/CoversSubform.vue';
 import { useFormHelpers } from '@/Helpers/formHelpers';
 import AllSubformButtons from '@/Components/AllSubformButtons.vue';
 import AddButton from '@/Components/AddButton.vue';
+import SubformButton from '@/Components/SubformButton.vue';
 
 const props = defineProps<{
   course: Object;

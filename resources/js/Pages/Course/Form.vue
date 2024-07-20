@@ -18,11 +18,11 @@
             type="text"
           />
         </div>
-<!--        <AddButton @click="add()" :disabled="!shouldAllowAdd" class="mr-4 font-semibold">
+        <!--        <AddButton @click="add()" :disabled="!shouldAllowAdd" class="mr-4 font-semibold">
           Add a course
         </AddButton>-->
       </div>
-      <div class="flex flex-col text-sm md:text-base">
+      <div class="mt-3 flex flex-col text-sm md:text-base">
         <TransitionGroup name="list">
           <Subform
             v-for="(course, index) in subformItems"

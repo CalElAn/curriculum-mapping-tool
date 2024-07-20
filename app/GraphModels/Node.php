@@ -7,13 +7,14 @@ use Illuminate\Support\Str;
 use Laudis\Neo4j\Types\CypherMap;
 use WikibaseSolutions\CypherDSL\Clauses\WhereClause;
 use WikibaseSolutions\CypherDSL\Expressions\Procedures\Procedure;
+use WikibaseSolutions\CypherDSL\Query;
 use function WikibaseSolutions\CypherDSL\node;
 use function WikibaseSolutions\CypherDSL\query;
 
 class Node extends GraphModel
 {
-    public static $currentQuery;
-    public static $nodeVar = 'nodeVar';
+    public static Query $currentQuery;
+    public static string $nodeVar = 'nodeVar';
 
     public static function node(): \WikibaseSolutions\CypherDSL\Patterns\Node
     {
@@ -35,7 +36,7 @@ class Node extends GraphModel
             ->getProperties();
     }
 
-    public static function addToCurrentQuery($query): void
+    public static function addToCurrentQuery(Query $query): void
     {
         self::$currentQuery = $query;
     }

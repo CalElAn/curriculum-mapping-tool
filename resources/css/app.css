@@ -36,7 +36,7 @@
     }
 
     .subform-title {
-        @apply label text-neutral-950 underline underline-offset-2;
+        @apply font-medium tracking-wide text-neutral-600 underline underline-offset-2;
     }
 
     .form-title-div {
