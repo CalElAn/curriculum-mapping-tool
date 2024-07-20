@@ -12,6 +12,8 @@ class CoversController extends Controller
     {
         $id = Covers::create($request->course_id, $request->topic_id, [
             'coverage_level' => $request->coverage_level,
+            'tools' => $request->tools, //TODO update CoversControllerTest
+            'comments' => $request->comments,
         ]);
 
         return back()->with('data', ['id' => $id]);

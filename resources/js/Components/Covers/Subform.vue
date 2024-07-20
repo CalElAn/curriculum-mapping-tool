@@ -25,6 +25,8 @@ defineEmits([
 ]);
 
 const coverageLevel = defineModel('coverageLevel');
+const tools = defineModel('tools');
+const comments = defineModel('comments');
 
 const coverageLevels: Array<string> = inject('coverageLevels');
 
@@ -61,6 +63,24 @@ onMounted(() => initFlowbite());
         {{ coverageLevelItem }}
       </option>
     </select>
+    <label class="label mt-4 block">Tools</label>
+    <textarea
+      rows="2"
+      placeholder="tools"
+      required
+      class="input mt-1 w-full"
+      type="text"
+      v-model="tools"
+    ></textarea>
+    <label class="label mt-4 block">Comments</label>
+    <textarea
+      rows="2"
+      placeholder="comments"
+      required
+      class="input mt-1 w-full"
+      type="text"
+      v-model="comments"
+    ></textarea>
     <FormValidationErrors class="mt-2 sm:col-span-full" :errors="form.errors" />
     <AllSubformButtons
       class="mt-4"

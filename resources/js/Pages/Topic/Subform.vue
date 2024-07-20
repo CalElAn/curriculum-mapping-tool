@@ -30,9 +30,15 @@
           <span class="subform-title">Courses covering this topic</span>
         </div>
         <div class="col-span-1 mt-4 flex flex-wrap gap-x-5 gap-y-3">
-          <AddButton @click="add()" :disabled="!shouldAllowAdd" class="my-auto text-sm">
-            Add a relationship
-          </AddButton>
+          <div class="w-full">
+            <AddButton
+              @click="add()"
+              :disabled="!shouldAllowAdd"
+              class="my-auto text-sm"
+            >
+              Add a relationship
+            </AddButton>
+          </div>
           <CoversSubform
             v-for="(item, index) in subformItems"
             :key="item"
@@ -100,7 +106,7 @@ watch(viewing, (shouldView) => {
 
   axios.get(route('topics.get_courses', id.value)).then((response) => {
     subformItems.value = response.data;
-    shouldAllowAdd.value = true
+    shouldAllowAdd.value = true;
   });
 });
 </script>

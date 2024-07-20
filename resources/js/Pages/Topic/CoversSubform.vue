@@ -13,6 +13,8 @@
     title="Course"
     :pillDivDisplay="`${courseNumber} | ${form.coverage_level}`"
     v-model:coverageLevel="form.coverage_level"
+    v-model:tools="form.tools"
+    v-model:comments="form.comments"
   >
     <select
       :disabled="editing"
@@ -45,6 +47,8 @@ const emit = defineEmits(emittedEvents);
 const useFormData = {
   id: props.coversData.id,
   coverage_level: props.coversData.coverage_level ?? '',
+  tools: props.coversData.tools ?? '',
+  comments: props.coversData.comments ?? '',
   course_id: props.coversData.course.id,
   topic_id: props.topicId,
 };
