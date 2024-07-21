@@ -1,12 +1,14 @@
 import { ref, toValue } from 'vue';
-import  remove  from 'lodash/remove';
+import type { Ref } from 'vue';
+import remove from 'lodash/remove';
 
 export function useFormHelpers(
   initialSubformItems: Array,
   newSubformItem: Object,
 ) {
-  const subformItems = ref(initialSubformItems);
-  const shouldAllowAdd = ref(true);
+  const subformItems: Ref<Array<Record<number, unknown>>> =
+    ref(initialSubformItems);
+  const shouldAllowAdd: Ref<Boolean> = ref(true);
 
   function add(): void {
     subformItems.value.unshift({
@@ -27,4 +29,23 @@ export function useFormHelpers(
   }
 
   return { subformItems, shouldAllowAdd, add, onCancelAdd, onDestroyed };
+}
+
+export function handleViewing(
+  shouldView: Boolean,
+  subformItems: Ref<Array<Record<number, unknown>>>,
+  showLoadingSpinner: Boolean,
+  route: string,
+): void {
+  if (!shouldView) {
+    subformItems.value = [];
+    return;
+  }
+
+  showLoadingSpinner.value = true;
+
+  axios.get(route).then((response) => {
+    subformItems.value = response.data;
+    showLoadingSpinner.value = false;
+  });
 }

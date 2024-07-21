@@ -59,7 +59,6 @@ const { form, adding, editing, store, update, destroy, id } = useSubformHelpers(
   emit,
   route('covers.store'),
   'covers.update',
-  [],
   'covers.destroy',
 );
 

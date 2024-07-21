@@ -30,6 +30,7 @@
           <span class="subform-title">Courses covering this topic</span>
         </div>
         <div class="col-span-1 mt-4 flex flex-wrap gap-x-5 gap-y-3">
+          <VueElementLoading :showLoadingSpinner="showLoadingSpinner" />
           <div class="w-full">
             <AddButton
               @click="add()"
@@ -58,17 +59,19 @@
 import SubformWrapper from '@/Components/SubformWrapper.vue';
 import FormValidationErrors from '@/Components/FormValidationErrors.vue';
 import { emittedEvents, useSubformHelpers } from '@/Helpers/subformHelpers.js';
-import { computed, ref, watch } from 'vue';
+import { ref, watch } from 'vue';
 import CoversSubform from '@/Pages/Topic/CoversSubform.vue';
-import { useFormHelpers } from '@/Helpers/formHelpers';
+import { handleViewing, useFormHelpers } from '@/Helpers/formHelpers';
 import AllSubformButtons from '@/Components/AllSubformButtons.vue';
 import AddButton from '@/Components/AddButton.vue';
+import VueElementLoading from '@/Components/VueElementLoading.vue';
 
 const props = defineProps<{
   topic: Object;
 }>();
 
 const viewing = ref(false);
+const showLoadingSpinner = ref(false);
 
 const formData = {
   id: props.topic.id,
@@ -83,7 +86,6 @@ const { id, form, adding, editing, store, update, destroy } = useSubformHelpers(
   emit,
   route('topics.store'),
   'topics.update',
-  [],
   'topics.destroy',
 );
 
@@ -99,14 +101,11 @@ const { subformItems, shouldAllowAdd, add, onCancelAdd, onDestroyed } =
   useFormHelpers([], newCoversRelationship);
 
 watch(viewing, (shouldView) => {
-  if (!shouldView) {
-    subformItems.value = [];
-    return;
-  }
-
-  axios.get(route('topics.get_courses', id.value)).then((response) => {
-    subformItems.value = response.data;
-    shouldAllowAdd.value = true;
-  });
+  handleViewing(
+    shouldView,
+    subformItems,
+    showLoadingSpinner,
+    route('topics.get_courses', id.value),
+  );
 });
 </script>

@@ -10,7 +10,6 @@ export function useSubformHelpers(
   emitFunction: (event: (typeof emittedEvents)[number], ...args: any[]) => void,
   storeRoute: string,
   updateRouteName: string,
-  initialUpdateRouteParams: Array,
   destroyRouteName: string,
 ) {
   const id = ref(subformData.id);
@@ -34,7 +33,7 @@ export function useSubformHelpers(
 
   function update(): void {
     form.patch(
-      route(updateRouteName, [...initialUpdateRouteParams, id.value]),
+      route(updateRouteName, id.value),
       {
         preserveScroll: true,
         onSuccess: () => {

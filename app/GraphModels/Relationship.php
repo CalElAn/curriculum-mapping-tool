@@ -89,6 +89,11 @@ abstract class Relationship extends GraphModel
             ->withVariable($toNodeVar = 'toNodeVar');
         $relationshipId = Str::uuid()->toString();
 
+        // to remove null values
+        $relationshipProperties = collect($relationshipProperties)
+            ->filter(fn($item) => (bool) $item)
+            ->toArray();
+
         $query = query()
             ->match($fromNode)
             ->match($toNode)
