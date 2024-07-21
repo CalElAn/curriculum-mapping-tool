@@ -42,8 +42,10 @@ class GraphModel
         });
     }
 
-    public static function getAll(string $nodeLabel, string $orderBy): Collection
-    {
+    public static function getAll(
+        string $nodeLabel,
+        string $orderBy,
+    ): Collection {
         $results = static::client()->run(
             <<<CYPHER
             MATCH (nodeVar:$nodeLabel)
@@ -56,11 +58,18 @@ class GraphModel
         return static::buildCollectionFromResults($results, ['nodeVar']);
     }
 
+    /**
+     * For $keyValuePairs of ['foo', 'bar']:
+     *      returns [$result->get('foo'), $result->get('bar')] for each $result in $results.
+     *      if $result->get('foo') is an array, returns [$result->get('foo')->getProperties(), $result->get('bar')] for each $result in $results.
+     *
+     * For $keyValuePairs of ['foo' => 'bar', 'baz' => 'boz']:
+     *       returns ['foo' => $result->get('bar')->getProperties(), 'baz' => $result->get('boz')->getProperties()] for each $result in $results.
+     */
     public static function buildCollectionFromResults(
         $results,
         array $keyValuePairs,
-    ): Collection
-    {
+    ): Collection {
         $resultsArray = [];
 
         foreach ($results as $result) {
@@ -68,12 +77,14 @@ class GraphModel
 
             foreach ($keyValuePairs as $key => $value) {
                 if (is_int($key)) {
+                    // then we know $keyValuePairs is of the format ['foo', 'bar']
                     if (is_string($result->get($value))) {
                         $resultsArray[] = $result->get($value);
                     } else {
                         $resultsArray[] = $result->get($value)->getProperties();
                     }
                 } else {
+                    // $keyValuePairs is of the format ['foo' => 'bar', 'baz' => 'boz']
                     $keyValuePairArray[$key] = $result
                         ->get($value)
                         ->getProperties();

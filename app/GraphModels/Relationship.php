@@ -52,6 +52,27 @@ abstract class Relationship extends GraphModel
         return static::buildCollectionFromResults($results, [$relationshipVar]);
     }
 
+    public static function allWithNodes(): Collection
+    {
+        $fromNodeLabel = static::getFromNodeLabel();
+        $toNodeLabel = static::getToNodeLabel();
+        $relationshipLabel = static::$label;
+
+        $results = static::client()->run(
+            <<<CYPHER
+            MATCH ($fromNodeLabel:$fromNodeLabel)-[$relationshipLabel:$relationshipLabel]->($toNodeLabel:$toNodeLabel)
+            RETURN $fromNodeLabel, $relationshipLabel, $toNodeLabel
+            CYPHER
+            ,
+        );
+
+        return static::buildCollectionFromResults($results, [
+            $fromNodeLabel => $fromNodeLabel,
+            $relationshipLabel => $relationshipLabel,
+            $toNodeLabel => $toNodeLabel,
+        ]);
+    }
+
     public static function create(
         string $fromNodeId,
         string $toNodeId,
@@ -126,5 +147,4 @@ abstract class Relationship extends GraphModel
             ],
         );
     }
-
 }

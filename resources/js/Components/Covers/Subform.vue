@@ -67,7 +67,6 @@ onMounted(() => initFlowbite());
     <textarea
       rows="2"
       placeholder="tools"
-      required
       class="input mt-1 w-full"
       type="text"
       v-model="tools"
@@ -76,7 +75,6 @@ onMounted(() => initFlowbite());
     <textarea
       rows="2"
       placeholder="comments"
-      required
       class="input mt-1 w-full"
       type="text"
       v-model="comments"

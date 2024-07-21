@@ -12,6 +12,9 @@ use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Inertia\Inertia;
 use Inertia\Response;
+use Laudis\Neo4j\Exception\Neo4jException;
+use Illuminate\Support\Facades\Validator;
+use Closure;
 
 class TopicController extends Controller
 {
@@ -56,6 +59,21 @@ class TopicController extends Controller
 
     public function store(Request $request): RedirectResponse
     {
+        Validator::make($request->all(), [
+            'name' => [
+                'required',
+                function (string $attribute, mixed $value, Closure $fail) {
+                    /* Note: neo4j uniqueness constraint is case-sensitive. e.g. if the name "Topic" exists,
+                            creating a node with name "topic" will not throw a ConstraintValidationFailed error.
+                            The "contains" collection method is case-sensitive
+                        */
+                    if (Topic::all()->pluck($attribute)->contains($value)) {
+                        $fail("The $attribute has to be unique.");
+                    }
+                },
+            ],
+        ])->validate();
+
         $id = Topic::create(['name' => $request->name]);
 
         return back()->with('data', ['id' => $id]);
@@ -63,6 +81,26 @@ class TopicController extends Controller
 
     public function update(Request $request, string $id): RedirectResponse
     {
+        Validator::make($request->all(), [
+            'name' => [
+                'required',
+                function (string $attribute, mixed $value, Closure $fail) use (
+                    $id,
+                ) {
+                    $oldTopicName = Topic::find($id)->get($attribute);
+
+                    if (
+                        Topic::all()
+                            ->where($attribute, '<>', $oldTopicName)
+                            ->pluck('name')
+                            ->contains($value)
+                    ) {
+                        $fail("The $attribute has to be unique.");
+                    }
+                },
+            ],
+        ])->validate();
+
         Topic::update($id, ['name' => $request->name]);
 
         return back();
