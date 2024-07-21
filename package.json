@@ -40,6 +40,7 @@
         "@heroicons/vue": "^2.1.4",
         "@neo4j-nvl/base": "^0.3.1",
         "@neo4j-nvl/interaction-handlers": "^0.3.1",
+        "floating-vue": "^5.2.2",
         "lodash": "^4.17.21",
         "neovis.js": "^2.1.0",
         "sweetalert2": "^11.12.0",

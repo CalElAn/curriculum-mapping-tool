@@ -1,10 +1,12 @@
 import './bootstrap';
 import '../css/app.css';
 import 'flowbite';
+import 'floating-vue/dist/style.css'
 
 import { createApp, h, DefineComponent } from 'vue';
 import { createInertiaApp } from '@inertiajs/vue3';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
+import FloatingVue from 'floating-vue'
 // import { ZiggyVue } from '../../vendor/tightenco/ziggy';
 
 import Layout from './Layouts/Layout.vue';
@@ -30,6 +32,7 @@ createInertiaApp({
     setup({ el, App, props, plugin }) {
         const app = createApp({ render: () => h(App, props) })
             .use(plugin)
+            .use(FloatingVue)
             // .use(ZiggyVue);
 
         app.config.globalProperties.route = route; // not using the ZiggyVue plugin because deploying it in the GitHub action will be a bit problematic (I will have to install php and do a composer install)

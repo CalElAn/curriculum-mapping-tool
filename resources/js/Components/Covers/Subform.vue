@@ -93,7 +93,14 @@ onMounted(() => initFlowbite());
       :form="form"
     />
   </form>
-  <PillDiv class="my-auto" v-else>
+  <PillDiv
+    v-tooltip="{
+      content: `Tools: ${tools}<br>Comments: ${comments}`,
+      html: true,
+    }"
+    class="my-auto"
+    v-else
+  >
     {{ pillDivDisplay }}
 
     <button
