@@ -39,7 +39,7 @@ class CourseController extends Controller
         return Inertia::render('Course/Form', [
             'initialCourses' => $initialCourses,
             'allTopics' => Topic::all('name'),
-            'relationshipLevels' => RelationshipLevels::cases(),
+            'levels' => RelationshipLevels::cases(),
             'filter' => $filter,
         ]);
     }

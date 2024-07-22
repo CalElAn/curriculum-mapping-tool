@@ -8,7 +8,7 @@
     <div class="mt-6">
       <div class="mb-2 mt-8 flex items-center justify-between md:mt-8">
         <div
-          class="flex w-full flex-row items-center justify-center gap-1 xsm:w-4/5 xl:gap-4 xl:text-base"
+          class="xsm:w-4/5 flex w-full flex-row items-center justify-center gap-1 xl:gap-4 xl:text-base"
         >
           <MagnifyingGlassIcon
             class="h-4 w-4 text-gray-500 sm:block sm:h-5 sm:w-5"
@@ -18,6 +18,7 @@
             class="input w-full shadow-sm"
             placeholder="Search..."
             type="text"
+            autofocus
           />
         </div>
         <!--        <AddButton @click="add()" :disabled="!shouldAllowAdd" class="mr-4 font-semibold">
@@ -50,11 +51,11 @@
 
 <script setup lang="ts">
 import { MagnifyingGlassIcon } from '@heroicons/vue/24/solid';
-import { Head } from '@inertiajs/vue3';
+import { Head, router } from '@inertiajs/vue3';
 import AddButton from '@/Components/AddButton.vue';
 import Subform from '@/Pages/Course/Subform.vue';
 import { useFormHelpers } from '@/Helpers/formHelpers';
-import { provide, ref, watch } from 'vue';
+import { computed, provide, ref, watch } from 'vue';
 import Pagination from '@/Components/Pagination.vue';
 import throttle from 'lodash/throttle';
 import { getFilteredItems } from '@/Helpers/helpers';
@@ -62,7 +63,7 @@ import { getFilteredItems } from '@/Helpers/helpers';
 const props = defineProps<{
   initialCourses: Object;
   allTopics: Array<object>;
-  relationshipLevels: Array<string>;
+  levels: Array<string>;
   filter: string | null;
 }>();
 
@@ -70,11 +71,6 @@ provide('allTopics', props.allTopics);
 provide('levels', props.levels);
 
 const filter = ref(props.filter);
-
-watch(
-  filter,
-  throttle(() => getFilteredItems(route('courses.form'), filter.value), 150),
-);
 
 const newCourse = {
   id: null,
@@ -84,6 +80,20 @@ const newCourse = {
 
 const { subformItems, shouldAllowAdd, add, onCancelAdd, onDestroyed } =
   useFormHelpers(props.initialCourses.data, newCourse);
+
+watch(
+  filter,
+  throttle(
+    () =>
+      getFilteredItems(
+        route('courses.form'),
+        filter.value,
+        subformItems,
+        'initialCourses',
+      ),
+    150,
+  ),
+);
 </script>
 
 <style scoped>

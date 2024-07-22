@@ -8,7 +8,7 @@
     <div class="mt-6">
       <div class="mb-2 mt-8 flex items-center justify-between md:mt-8">
         <div
-          class="flex w-full flex-row items-center justify-center gap-1 xsm:w-4/5 xl:gap-4 xl:text-base"
+          class="xsm:w-4/5 flex w-full flex-row items-center justify-center gap-1 xl:gap-4 xl:text-base"
         >
           <MagnifyingGlassIcon
             class="h-4 w-4 text-gray-500 sm:block sm:h-5 sm:w-5"
@@ -71,11 +71,6 @@ provide('levels', props.levels);
 
 const filter = ref(props.filter);
 
-watch(
-  filter,
-  throttle(() => getFilteredItems(route('knowledge_areas.form'), filter.value), 150),
-);
-
 const newCourse = {
   id: null,
   number: null,
@@ -84,6 +79,20 @@ const newCourse = {
 
 const { subformItems, shouldAllowAdd, add, onCancelAdd, onDestroyed } =
   useFormHelpers(props.initialKnowledgeAreas.data, newCourse);
+
+watch(
+  filter,
+  throttle(
+    () =>
+      getFilteredItems(
+        route('knowledge_areas.form'),
+        filter.value,
+        subformItems,
+        'initialKnowledgeAreas',
+      ),
+    150,
+  ),
+);
 </script>
 
 <style scoped>

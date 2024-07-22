@@ -75,11 +75,6 @@ provide('levels', props.levels);
 
 const filter = ref(props.filter);
 
-watch(
-  filter,
-  throttle(() => getFilteredItems(route('topics.form'), filter.value), 150),
-);
-
 const newTopic = {
   id: null,
   name: null,
@@ -87,6 +82,20 @@ const newTopic = {
 
 const { subformItems, shouldAllowAdd, add, onCancelAdd, onDestroyed } =
   useFormHelpers(props.initialTopics.data, newTopic);
+
+watch(
+  filter,
+  throttle(
+    () =>
+      getFilteredItems(
+        route('topics.form'),
+        filter.value,
+        subformItems,
+        'initialTopics',
+      ),
+    150,
+  ),
+);
 </script>
 
 <style scoped>
