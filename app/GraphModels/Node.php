@@ -10,6 +10,7 @@ use WikibaseSolutions\CypherDSL\Expressions\Procedures\Procedure;
 use WikibaseSolutions\CypherDSL\Query;
 use function WikibaseSolutions\CypherDSL\node;
 use function WikibaseSolutions\CypherDSL\query;
+use function WikibaseSolutions\CypherDSL\relationshipTo;
 
 class Node extends GraphModel
 {
@@ -102,6 +103,55 @@ class Node extends GraphModel
         $results = static::client()->run($query->build());
 
         return static::buildCollectionFromResults($results, [$nodeVar]);
+    }
+
+    public static function getRelatedNodes(
+        string $id,
+        Relationship $relationship,
+        ?string $orderBy = null,
+    ): Collection {
+        $nodeLabelToFind = static::$label;
+        $fromNodeLabel = $relationship::getFromNodeLabel();
+        $toNodeLabel = $relationship::getToNodeLabel();
+
+        $fromNode = node($fromNodeLabel);
+        $toNode = node($toNodeLabel);
+
+        if ($fromNodeLabel === $nodeLabelToFind) {
+            $fromNode->withProperties(['id' => $id]);
+
+            $nodeToReturn = $toNode;
+            $nodeLabelToReturn = $toNodeLabel;
+            $toNode->withVariable($toNodeLabel);
+        } else {
+            $toNode->withProperties(['id' => $id]);
+
+            $nodeToReturn = $fromNode;
+            $nodeLabelToReturn = $fromNodeLabel;
+            $fromNode->withVariable($fromNodeLabel);
+        }
+
+        $relationshipTo = relationshipTo()
+            ->withTypes([$relationship::$label])
+            ->withVariable($relationship::$label);
+
+        $query = query()
+            ->match($fromNode->relationship($relationshipTo, $toNode))
+            ->returning([$relationshipTo, $nodeToReturn]);
+
+        if ($orderBy) {
+            $query->raw(
+                'ORDER BY',
+                "LOWER(toString($nodeLabelToReturn.$orderBy))",
+            );
+        }
+
+        $results = static::client()->run($query->build());
+
+        return static::buildCollectionFromResults($results, [
+            $relationship::$label => $relationship::$label,
+            $nodeLabelToReturn => $nodeLabelToReturn,
+        ]);
     }
 
     public static function create(array $properties): string

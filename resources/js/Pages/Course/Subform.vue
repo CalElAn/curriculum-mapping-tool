@@ -29,7 +29,7 @@
     <template v-if="viewing && id" #viewingContainer>
       <div class="viewing-subform-container">
         <div>
-          <span class="subform-title">Topics covered by this course</span>
+          <span class="subform-title">Topics taught by this course</span>
         </div>
         <div class="col-span-1 mt-4 flex flex-wrap gap-x-5 gap-y-3">
           <VueElementLoading :showLoadingSpinner="showLoadingSpinner" />
@@ -40,10 +40,10 @@
           >
             Add a relationship
           </AddButton>
-          <CourseAllocationSubform
+          <TeachesSubform
             v-for="(item, index) in subformItems"
             :key="item"
-            :coversData="item"
+            :teachesData="item"
             :courseId="id"
             @cancelAdd="onCancelAdd()"
             @stored="shouldAllowAdd = true"
@@ -60,7 +60,7 @@ import SubformWrapper from '@/Components/SubformWrapper.vue';
 import FormValidationErrors from '@/Components/FormValidationErrors.vue';
 import { emittedEvents, useSubformHelpers } from '@/Helpers/subformHelpers.js';
 import { ref, watch } from 'vue';
-import CourseAllocationSubform from '@/Pages/Course/CoversSubform.vue';
+import TeachesSubform from '@/Pages/Course/TeachesSubform.vue';
 import { handleViewing, useFormHelpers } from '@/Helpers/formHelpers';
 import AddButton from '@/Components/AddButton.vue';
 import SubformButton from '@/Components/SubformButton.vue';
@@ -90,23 +90,25 @@ const { id, form, adding, editing, store, update, destroy } = useSubformHelpers(
   'courses.destroy',
 );
 
-const newCoversRelationship = {
-  id: null,
-  coverage_level: '',
-  topic: {
+const newTeachesRelationship = {
+  TEACHES: {
+    id: null,
+    level: '',
+  },
+  Topic: {
     id: '',
   },
 };
 
 const { subformItems, shouldAllowAdd, add, onCancelAdd, onDestroyed } =
-  useFormHelpers([], newCoversRelationship);
+  useFormHelpers([], newTeachesRelationship);
 
 watch(viewing, (shouldView) => {
   handleViewing(
     shouldView,
     subformItems,
     showLoadingSpinner,
-    route('topics.get_courses', id.value),
+    route('courses.get_topics', id.value),
   );
 });
 </script>

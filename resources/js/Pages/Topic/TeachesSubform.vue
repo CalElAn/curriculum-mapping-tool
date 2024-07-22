@@ -1,5 +1,5 @@
 <template>
-  <CoversSubform
+  <GenericRelationshipSubform
     @formSubmit="store()"
     @save="update()"
     @delete="destroy()"
@@ -11,8 +11,8 @@
     :adding="adding"
     :form="form"
     title="Course"
-    :pillDivDisplay="`${courseNumber} | ${form.coverage_level}`"
-    v-model:coverageLevel="form.coverage_level"
+    :pillDivDisplay="`${courseNumber} | ${form.level}`"
+    v-model:level="form.level"
     v-model:tools="form.tools"
     v-model:comments="form.comments"
   >
@@ -27,16 +27,16 @@
         {{ course.number }}
       </option>
     </select>
-  </CoversSubform>
+  </GenericRelationshipSubform>
 </template>
 
 <script setup lang="ts">
 import { emittedEvents, useSubformHelpers } from '@/Helpers/subformHelpers.js';
 import { onMounted, watch, computed, inject } from 'vue';
-import CoversSubform from '@/Components/Covers/Subform.vue';
+import GenericRelationshipSubform from '@/Components/GenericRelationshipSubform.vue';
 
 const props = defineProps<{
-  coversData: Object;
+  teachesData: Object;
   topicId: String;
 }>();
 
@@ -45,21 +45,21 @@ const allCourses: Array<string> = inject('allCourses');
 const emit = defineEmits(emittedEvents);
 
 const useFormData = {
-  id: props.coversData.id,
-  coverage_level: props.coversData.coverage_level ?? '',
-  tools: props.coversData.tools ?? '',
-  comments: props.coversData.comments ?? '',
-  course_id: props.coversData.course.id,
+  id: props.teachesData.TEACHES.id,
+  level: props.teachesData.TEACHES.level ?? '',
+  tools: props.teachesData.TEACHES.tools ?? '',
+  comments: props.teachesData.TEACHES.comments ?? '',
+  course_id: props.teachesData.Course.id,
   topic_id: props.topicId,
 };
 
 const { form, adding, editing, store, update, destroy, id } = useSubformHelpers(
-  props.coversData,
+  props.teachesData,
   useFormData,
   emit,
-  route('covers.store'),
-  'covers.update',
-  'covers.destroy',
+  route('teaches.store'),
+  'teaches.update',
+  'teaches.destroy',
 );
 
 const courseNumber = computed(

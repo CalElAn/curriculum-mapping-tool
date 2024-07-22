@@ -3,28 +3,28 @@
 namespace App\Http\Controllers;
 
 use App\GraphModels\Covers;
+use App\GraphModels\Teaches;
 use Closure;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
-class CoversController extends Controller
+class TeachesController extends Controller
 {
     public function store(Request $request): RedirectResponse
     {
         Validator::make($request->all(), [
-            'topic_id' => [
+            'course_id' => [
                 'required',
                 function (string $attribute, mixed $value, Closure $fail) use (
                     $request,
                 ) {
                     if (
-                        Covers::allWithNodes()
+                        Teaches::allWithNodes()
                             ->filter(
-                                fn($item) => $item['Topic']['id'] ===
-                                    $request->topic_id &&
-                                    $item['KnowledgeArea']['id'] ===
-                                        $request->knowledge_area_id,
+                                fn($item) => $item['Course']['id'] ===
+                                    $request->course_id &&
+                                    $item['Topic']['id'] === $request->topic_id,
                             )
                             ->isNotEmpty()
                     ) {
@@ -32,10 +32,10 @@ class CoversController extends Controller
                     }
                 },
             ],
-            'knowledge_area_id' => 'required',
+            'topic_id' => 'required',
         ])->validate();
 
-        $id = Covers::create($request->topic_id, $request->knowledge_area_id, [
+        $id = Teaches::create($request->course_id, $request->topic_id, [
             'level' => $request->level,
             'tools' => $request->tools, //TODO update CoversControllerTest
             'comments' => $request->comments,
@@ -46,7 +46,7 @@ class CoversController extends Controller
 
     public function update(Request $request, string $id): RedirectResponse
     {
-        Covers::update($id, [
+        Teaches::update($id, [
             'level' => $request->level,
         ]);
 
@@ -55,7 +55,7 @@ class CoversController extends Controller
 
     public function destroy(Request $request, string $id): RedirectResponse
     {
-        Covers::delete($id);
+        Teaches::delete($id);
 
         return back();
     }

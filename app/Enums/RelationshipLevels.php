@@ -2,7 +2,7 @@
 
 namespace App\Enums;
 
-enum CoverageLevels: string
+enum RelationshipLevels: string
 {
     case BEGINNER = 'beginner';
     case INTERMEDIATE = 'intermediate';

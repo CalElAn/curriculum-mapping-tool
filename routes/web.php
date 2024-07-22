@@ -3,7 +3,9 @@
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\CoversController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\KnowledgeAreaController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\TeachesController;
 use App\Http\Controllers\TopicController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -25,6 +27,16 @@ Route::post('/courses/form', [CourseController::class, 'store'])->name('courses.
 Route::patch('/courses/form/{id}', [CourseController::class, 'update'])->name('courses.update');
 Route::delete('/courses/form/{id}', [CourseController::class, 'destroy'])->name('courses.destroy');
 
+Route::get('/data-entry/knowledge-areas/form', [KnowledgeAreaController::class, 'form'])->name('knowledge_areas.form');
+Route::get('/knowledge-areas/form/{knowledgeAreaId}/get-topics', [KnowledgeAreaController::class, 'getTopics'])->name('knowledge_areas.get_topics');
+Route::post('/knowledge-areas/form', [KnowledgeAreaController::class, 'store'])->name('knowledge_areas.store');
+Route::patch('/knowledge-areas/form/{id}', [KnowledgeAreaController::class, 'update'])->name('knowledge_areas.update');
+Route::delete('/knowledge-areas/form/{id}', [KnowledgeAreaController::class, 'destroy'])->name('knowledge_areas.destroy');
+
+
+Route::post('/teaches/form', [TeachesController::class, 'store'])->name('teaches.store');
+Route::patch('/teaches/form/{id}', [TeachesController::class, 'update'])->name('teaches.update');
+Route::delete('/teaches/form/{id}', [TeachesController::class, 'destroy'])->name('teaches.destroy');
 
 Route::post('/covers/form', [CoversController::class, 'store'])->name('covers.store');
 Route::patch('/covers/form/{id}', [CoversController::class, 'update'])->name('covers.update');

@@ -6,6 +6,7 @@ use App\Enums\RelationshipLevels;
 use App\GraphModels\Covers;
 use App\GraphModels\GraphModel;
 use App\GraphModels\Course;
+use App\GraphModels\KnowledgeArea;
 use App\GraphModels\Teaches;
 use App\GraphModels\Topic;
 use Illuminate\Http\RedirectResponse;
@@ -16,44 +17,47 @@ use Inertia\Inertia;
 use Inertia\Response;
 use App\Http\Helpers\Helpers;
 
-class CourseController extends Controller
+class KnowledgeAreaController extends Controller
 {
     public function form(Request $request): Response
     {
         $filter = $request->filter;
 
-        $initialCourses = $filter
-            ? Course::where(
+        $initialKnowledgeAreas = $filter
+            ? KnowledgeArea::where(
                 [
-                    ['number', 'contains', $filter],
                     ['title', 'contains', $filter],
+                    ['description', 'contains', $filter],
                 ],
                 'OR',
             )
-                ->orderBy('number')
+                ->orderBy('title')
                 ->get()
-            : Course::all('number');
+            : KnowledgeArea::all('title');
 
-        $initialCourses = Helpers::paginate($request->page, $initialCourses);
+        $initialKnowledgeAreas = Helpers::paginate(
+            $request->page,
+            $initialKnowledgeAreas,
+        );
 
-        return Inertia::render('Course/Form', [
-            'initialCourses' => $initialCourses,
+        return Inertia::render('KnowledgeArea/Form', [
+            'initialKnowledgeAreas' => $initialKnowledgeAreas,
             'allTopics' => Topic::all('name'),
-            'relationshipLevels' => RelationshipLevels::cases(),
+            'levels' => RelationshipLevels::cases(),
             'filter' => $filter,
         ]);
     }
 
-    public function getTopics(Request $request, string $courseId): Collection
+    public function getTopics(Request $request, string $knowledgeAreaId): Collection
     {
-        return Course::getRelatedNodes($courseId, new Teaches());
+        return KnowledgeArea::getRelatedNodes($knowledgeAreaId, new Covers());
     }
 
     public function store(Request $request): RedirectResponse
     {
-        $id = Course::create([
-            'code' => $request->code,
+        $id = KnowledgeArea::create([
             'title' => $request->title,
+            'description' => $request->description,
         ]);
 
         return back()->with('data', ['id' => $id]);
@@ -61,9 +65,9 @@ class CourseController extends Controller
 
     public function update(Request $request, string $id): RedirectResponse
     {
-        Course::update($id, [
-            'code' => $request->code,
+        KnowledgeArea::update($id, [
             'title' => $request->title,
+            'description' => $request->description,
         ]);
 
         return back();
@@ -71,7 +75,7 @@ class CourseController extends Controller
 
     public function destroy(Request $request, string $id): RedirectResponse
     {
-        Course::delete($id);
+        KnowledgeArea::delete($id);
 
         return back();
     }

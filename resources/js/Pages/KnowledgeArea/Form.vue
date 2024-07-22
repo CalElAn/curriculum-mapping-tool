@@ -1,10 +1,10 @@
 <template>
-  <Head title="Data Entry | Courses" />
+  <Head title="Data Entry | Knowledge Areas" />
 
   <div
     class="base-card xmt-6 w-full px-4 py-4 text-sm md:w-11/12 md:text-base xl:px-10"
   >
-    <p class="form-title mt-2 text-center">Courses</p>
+    <p class="form-title mt-2 text-center">Knowledge Areas</p>
     <div class="mt-6">
       <div class="mb-2 mt-8 flex items-center justify-between md:mt-8">
         <div
@@ -27,9 +27,9 @@
       <div class="mt-3 flex flex-col text-sm md:text-base">
         <TransitionGroup name="list">
           <Subform
-            v-for="(course, index) in subformItems"
-            :key="course"
-            :course="course"
+            v-for="(knowledgeArea, index) in subformItems"
+            :key="knowledgeArea"
+            :knowledgeArea="knowledgeArea"
             @cancelAdd="onCancelAdd()"
             @stored="shouldAllowAdd = true"
             @destroyed="onDestroyed(index)"
@@ -37,12 +37,12 @@
         </TransitionGroup>
 
         <p v-if="!subformItems || subformItems.length === 0" class="ml-2">
-          No courses found
+          No Knowledge Areas found
         </p>
       </div>
       <Pagination
         class="mt-6 flex w-11/12 justify-start"
-        :links="initialCourses.links"
+        :links="initialKnowledgeAreas.links"
       />
     </div>
   </div>
@@ -52,7 +52,7 @@
 import { MagnifyingGlassIcon } from '@heroicons/vue/24/solid';
 import { Head } from '@inertiajs/vue3';
 import AddButton from '@/Components/AddButton.vue';
-import Subform from '@/Pages/Course/Subform.vue';
+import Subform from '@/Pages/KnowledgeArea/Subform.vue';
 import { useFormHelpers } from '@/Helpers/formHelpers';
 import { provide, ref, watch } from 'vue';
 import Pagination from '@/Components/Pagination.vue';
@@ -60,9 +60,9 @@ import throttle from 'lodash/throttle';
 import { getFilteredItems } from '@/Helpers/helpers';
 
 const props = defineProps<{
-  initialCourses: Object;
+  initialKnowledgeAreas: Object;
   allTopics: Array<object>;
-  relationshipLevels: Array<string>;
+  levels: Array<string>;
   filter: string | null;
 }>();
 
@@ -73,7 +73,7 @@ const filter = ref(props.filter);
 
 watch(
   filter,
-  throttle(() => getFilteredItems(route('courses.form'), filter.value), 150),
+  throttle(() => getFilteredItems(route('knowledge_areas.form'), filter.value), 150),
 );
 
 const newCourse = {
@@ -83,7 +83,7 @@ const newCourse = {
 };
 
 const { subformItems, shouldAllowAdd, add, onCancelAdd, onDestroyed } =
-  useFormHelpers(props.initialCourses.data, newCourse);
+  useFormHelpers(props.initialKnowledgeAreas.data, newCourse);
 </script>
 
 <style scoped>

@@ -3,16 +3,20 @@ import PillDiv from '@/Components/PillDiv.vue';
 import AllSubformButtons from '@/Components/AllSubformButtons.vue';
 import { EllipsisVerticalIcon } from '@heroicons/vue/20/solid';
 import FormValidationErrors from '@/Components/FormValidationErrors.vue';
-import { inject, onMounted, watch } from 'vue';
+import { computed, inject, onMounted, watch } from 'vue';
 import { initFlowbite } from 'flowbite';
 
-const props = defineProps<{
-  editing: Boolean;
-  adding: Boolean;
-  title: String;
-  pillDivDisplay: String;
-  form: Object;
-}>();
+const props = defineProps({
+  editing: Boolean,
+  adding: Boolean,
+  title: String,
+  pillDivDisplay: String,
+  form: Object,
+  showTools: {
+    type: Boolean,
+    default: true,
+  },
+});
 
 defineEmits([
   'formSubmit',
@@ -24,11 +28,19 @@ defineEmits([
   'toggleViewing',
 ]);
 
-const coverageLevel = defineModel('coverageLevel');
+const level = defineModel('level');
 const tools = defineModel('tools');
 const comments = defineModel('comments');
 
-const coverageLevels: Array<string> = inject('coverageLevels');
+const levels: Array<string> = inject('levels');
+
+const tooltipContent = computed(() => {
+  if (props.showTools) {
+    return `Tools: ${tools.value}<br>Comments: ${comments.value}`;
+  }
+
+  return `Comments: ${comments.value}`;
+});
 
 const random = Math.round(Math.random() * 10000);
 
@@ -56,21 +68,24 @@ onMounted(() => initFlowbite());
 
     <slot />
 
-    <label class="label mt-4 block">Coverage level</label>
-    <select required v-model="coverageLevel" class="select mt-1 w-full">
-      <option value="" selected disabled>- select coverage level -</option>
-      <option v-for="coverageLevelItem in coverageLevels">
-        {{ coverageLevelItem }}
+    <label class="label mt-4 block">Level</label>
+    <select required v-model="level" class="select mt-1 w-full">
+      <option value="" selected disabled>- select level -</option>
+      <option v-for="relationshipLevel in levels">
+        {{ relationshipLevel }}
       </option>
     </select>
-    <label class="label mt-4 block">Tools</label>
-    <textarea
-      rows="2"
-      placeholder="tools"
-      class="input mt-1 w-full"
-      type="text"
-      v-model="tools"
-    ></textarea>
+    <template>
+      <label class="label mt-4 block">Tools</label>
+      <textarea
+        rows="2"
+        placeholder="tools"
+        class="input mt-1 w-full"
+        type="text"
+        v-model="tools"
+      >
+      </textarea>
+    </template>
     <label class="label mt-4 block">Comments</label>
     <textarea
       rows="2"
@@ -95,7 +110,7 @@ onMounted(() => initFlowbite());
   </form>
   <PillDiv
     v-tooltip="{
-      content: `Tools: ${tools}<br>Comments: ${comments}`,
+      content: tooltipContent,
       html: true,
     }"
     class="my-auto"

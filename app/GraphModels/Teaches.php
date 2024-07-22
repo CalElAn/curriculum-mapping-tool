@@ -9,17 +9,17 @@ use function WikibaseSolutions\CypherDSL\node;
 use function WikibaseSolutions\CypherDSL\procedure;
 use function WikibaseSolutions\CypherDSL\query;
 
-class Covers extends Relationship
+class Teaches extends Relationship
 {
-    public static string $label = 'COVERS';
+    public static string $label = 'TEACHES';
 
     public static function getFromNodeLabel(): string
     {
-        return Topic::$label;
+        return Course::$label;
     }
 
     public static function getToNodeLabel(): string
     {
-        return KnowledgeArea::$label;
+        return Topic::$label;
     }
 }
