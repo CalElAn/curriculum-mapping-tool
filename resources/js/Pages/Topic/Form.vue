@@ -66,11 +66,13 @@ import { getFilteredItems } from '@/Helpers/helpers';
 const props = defineProps<{
   initialTopics: Object;
   allCourses: Array<object>;
+  allKnowledgeAreas: Array<object>;
   levels: Array<string>;
   filter: string | null;
 }>();
 
 provide('allCourses', props.allCourses);
+provide('allKnowledgeAreas', props.allKnowledgeAreas);
 provide('levels', props.levels);
 
 const filter = ref(props.filter);

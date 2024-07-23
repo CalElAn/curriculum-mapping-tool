@@ -96,6 +96,7 @@ const newTeachesRelationship = {
   COVERS: {
     id: null,
     level: '',
+    adding: true,
   },
   Topic: {
     id: '',

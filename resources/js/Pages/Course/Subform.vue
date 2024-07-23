@@ -94,6 +94,7 @@ const newTeachesRelationship = {
   TEACHES: {
     id: null,
     level: '',
+    adding: true,
   },
   Topic: {
     id: '',

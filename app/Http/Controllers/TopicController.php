@@ -6,6 +6,7 @@ use App\Enums\RelationshipLevels;
 use App\GraphModels\Covers;
 use App\GraphModels\GraphModel;
 use App\GraphModels\Course;
+use App\GraphModels\KnowledgeArea;
 use App\GraphModels\Teaches;
 use App\GraphModels\Topic;
 use App\Http\Helpers\Helpers;
@@ -36,6 +37,7 @@ class TopicController extends Controller
         return Inertia::render('Topic/Form', [
             'initialTopics' => $initialTopics,
             'allCourses' => Course::all('number'),
+            'allKnowledgeAreas' => KnowledgeArea::all('title'),
             'levels' => RelationshipLevels::cases(),
             'filter' => $filter,
         ]);
@@ -58,6 +60,11 @@ class TopicController extends Controller
     public function getCourses(Request $request, string $topicId): Collection
     {
         return Topic::getRelatedNodes($topicId, new Teaches(), 'number');
+    }
+
+    public function getKnowledgeAreas(Request $request, string $topicId): Collection
+    {
+        return Topic::getRelatedNodes($topicId, new Covers(), 'title');
     }
 
     public function store(Request $request): RedirectResponse

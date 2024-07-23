@@ -54,7 +54,7 @@ const useFormData = {
 };
 
 const { form, adding, editing, store, update, destroy, id } = useSubformHelpers(
-  props.teachesData,
+  props.teachesData.TEACHES,
   useFormData,
   emit,
   route('teaches.store'),

@@ -15,6 +15,7 @@ Route::get('/', DashboardController::class)->name('dashboard');
 
 Route::get('/data-entry/topics/form', [TopicController::class, 'form'])->name('topics.form');
 Route::get('/topics/form/{topicId}/get-courses', [TopicController::class, 'getCourses'])->name('topics.get_courses');
+Route::get('/topics/form/{topicId}/get-knowledge-areas', [TopicController::class, 'getKnowledgeAreas'])->name('topics.get_knowledge_areas');
 Route::post('/topics/form', [TopicController::class, 'store'])->name('topics.store');
 Route::patch('/topics/form/{id}', [TopicController::class, 'update'])->name('topics.update');
 Route::delete('/topics/form/{id}', [TopicController::class, 'destroy'])->name('topics.destroy');

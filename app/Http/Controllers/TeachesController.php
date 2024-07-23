@@ -48,6 +48,8 @@ class TeachesController extends Controller
     {
         Teaches::update($id, [
             'level' => $request->level,
+            'tools' => $request->tools,
+            'comments' => $request->comments,
         ]);
 
         return back();

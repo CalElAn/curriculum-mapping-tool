@@ -36,8 +36,7 @@ class CoversController extends Controller
         ])->validate();
 
         $id = Covers::create($request->topic_id, $request->knowledge_area_id, [
-            'level' => $request->level,
-            'tools' => $request->tools, //TODO update CoversControllerTest
+            'level' => $request->level, //TODO update CoversControllerTest
             'comments' => $request->comments,
         ]);
 
@@ -48,6 +47,7 @@ class CoversController extends Controller
     {
         Covers::update($id, [
             'level' => $request->level,
+            'comments' => $request->comments,
         ]);
 
         return back();

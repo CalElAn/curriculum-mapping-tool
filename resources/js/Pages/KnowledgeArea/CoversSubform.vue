@@ -14,7 +14,6 @@
     :pillDivDisplay="`${topicName} | ${form.level}`"
     :showTools="false"
     v-model:level="form.level"
-    v-model:tools="form.tools"
     v-model:comments="form.comments"
   >
     <select
@@ -48,14 +47,13 @@ const emit = defineEmits(emittedEvents);
 const useFormData = {
   id: props.coversData.COVERS.id,
   level: props.coversData.COVERS.level ?? '',
-  tools: props.coversData.COVERS.tools ?? '',
   comments: props.coversData.COVERS.comments ?? '',
   topic_id: props.coversData.Topic.id,
   knowledge_area_id: props.knowledgeAreaId,
 };
 
 const { form, adding, editing, store, update, destroy, id } = useSubformHelpers(
-  props.coversData,
+  props.coversData.COVERS,
   useFormData,
   emit,
   route('covers.store'),
