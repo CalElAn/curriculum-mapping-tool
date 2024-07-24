@@ -15,6 +15,20 @@ const props = defineProps<{
   levels: Array<string>;
 }>();
 
+const courseNumbers = map(props.courses, 'number');
+const prereqData = props.prerequisiteCourses.filter(
+  (item) =>
+    courseNumbers.includes(item.Course_from.number) &&
+    courseNumbers.includes(item.Course_to.number),
+);
+
+const relationships = {
+  Prerequisites: map(prereqData, 'IS_PREREQUISITE_OF'),
+  Teaches: map(props.coursesWithTopics, 'TEACHES'),
+  Covers: map(props.knowledgeAreasWithTopics, 'COVERS'),
+};
+const selectedRelationships = ref(Object.keys(relationships));
+
 const allCourses: Array<Number> = props.courses.map((course) => course.number);
 const selectedCourses = ref(allCourses);
 const selectAll = ref(true);
@@ -104,6 +118,7 @@ let edges = [];
 
 edges.push(
   ...props.coursesWithTopics.map((courseData) => ({
+    id: courseData.TEACHES.id,
     from: courseData.Course.id,
     to: courseData.Topic.id,
     label: `teaches`,
@@ -119,6 +134,7 @@ edges.push(
 
 edges.push(
   ...props.knowledgeAreasWithTopics.map((item) => ({
+    id: item.COVERS.id,
     from: item.Topic.id,
     to: item.KnowledgeArea.id,
     label: `covers`,
@@ -131,16 +147,9 @@ edges.push(
   })),
 );
 
-const courseNumbers = map(props.courses, 'number');
-
-const prereqData = props.prerequisiteCourses.filter(
-  (item) =>
-    courseNumbers.includes(item.Course_from.number) &&
-    courseNumbers.includes(item.Course_to.number),
-);
-
 edges.push(
   ...prereqData.map((prereqDataItem) => ({
+    id: prereqDataItem.IS_PREREQUISITE_OF.id,
     from: prereqDataItem.Course_from.id,
     to: prereqDataItem.Course_to.id,
     label: `is a prerequisite of`,
@@ -169,6 +178,7 @@ function toggleCourseVisibility(courseId: string, setVisibilityTo = null) {
 
   let nodeUpdates = [{ id: courseId, hidden: shouldHideCourse }];
 
+  // commented because it might be confusing for the user to have Topics be hidden when the related course is hidden
   // hideRelatedTopics(nodeUpdates, courseId, shouldHideCourse);
 
   nodes.update(nodeUpdates);
@@ -217,6 +227,18 @@ function isTopicAttachedToMultipleVisibleCourses(topicId): boolean {
   );
 }
 
+function toggleRelationshipVisibility(
+  relationshipData: Array<Object>,
+  relationshipName: string,
+) {
+  let edgeUpdates = relationshipData.map((item) => ({
+    id: item.id,
+    hidden: !selectedRelationships.value.includes(relationshipName),
+  }));
+
+  edges.update(edgeUpdates);
+}
+
 function truncateText(text: string, maxLength: Number = 20): string {
   return `${text.substring(0, 20)}${text.length > maxLength ? '...' : ''}`;
 }
@@ -233,7 +255,7 @@ const options = {
     scaling: {
       min: 1,
       max: 4,
-      label: false
+      label: false,
     },
     font: { align: 'top', vadjust: -1 },
   },
@@ -250,12 +272,11 @@ onMounted(() => {
 </script>
 
 <template>
-  <Head title="Data Entry | Topics" />
+  <Head title="Visualization" />
 
   <div
-    class="base-card w-full space-y-2 px-4 py-4 text-sm md:w-11/12 md:text-base xl:px-10"
+    class="base-card flex h-[90vh] w-full flex-col space-y-2 px-4 py-4 text-sm md:w-11/12 md:text-base xl:px-10"
   >
-<!--    <p class="form-title text-center">Topics</p>-->
     <div class="flex flex-wrap gap-x-5 gap-y-3 rounded-lg border p-3">
       <span class="font-semibold tracking-wide">Courses:</span>
       <PillDiv
@@ -278,9 +299,24 @@ onMounted(() => {
         {{ course.number }}
       </PillDiv>
     </div>
+    <div class="flex flex-wrap gap-x-5 gap-y-3 rounded-lg border p-3">
+      <span class="font-semibold tracking-wide">Relationships:</span>
+      <PillDiv v-for="(relationshipData, relationshipName) in relationships">
+        <input
+          @change="
+            toggleRelationshipVisibility(relationshipData, relationshipName)
+          "
+          class="input-checkbox mr-2"
+          type="checkbox"
+          v-model="selectedRelationships"
+          :value="relationshipName"
+        />
+        {{ relationshipName }}
+      </PillDiv>
+    </div>
     <div
       id="graph-container"
-      class="h-[40rem] rounded-lg border bg-gray-100"
+      class="basis-full rounded-lg border bg-gray-100"
     ></div>
   </div>
 </template>

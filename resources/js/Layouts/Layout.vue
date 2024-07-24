@@ -168,6 +168,7 @@ import TabLink from '@/Components/TabLink.vue';
     </header>
 
     <div
+      v-if="$page.url.startsWith('/data-entry')"
       class="border-b border-gray-200 text-center text-base font-medium text-gray-500 dark:border-gray-700 dark:text-gray-400 md:w-11/12"
     >
       <ul class="-mb-px flex flex-wrap">
