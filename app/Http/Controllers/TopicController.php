@@ -47,13 +47,18 @@ class TopicController extends Controller
     public function visualization(): Response
     {
         $coursesWithTopics = Teaches::allWithNodes();
+        $knowledgeAreasWithTopics = Covers::allWithNodes();
 
         return Inertia::render('Topic/Visualization', [
             'courses' => GraphModel::getUniqueResults(
-                array_column($coursesWithTopics->toArray(), 'Course'),
+                $coursesWithTopics->pluck('Course'),
             ),
             'topics' => Topic::all('name'),
             'coursesWithTopics' => $coursesWithTopics,
+            'knowledgeAreas' => GraphModel::getUniqueResults(
+                $knowledgeAreasWithTopics->pluck('KnowledgeArea'),
+            ),
+            'knowledgeAreasWithTopics' => $knowledgeAreasWithTopics,
             'prerequisiteCourses' => IsPrerequisiteOf::allWithNodes(),
             'levels' => RelationshipLevels::cases(),
         ]);

@@ -8,8 +8,10 @@ import map from 'lodash/map';
 const props = defineProps<{
   courses: Array<object>;
   topics: Array<object>;
+  knowledgeAreas: Array<object>;
   coursesWithTopics: Array<object>;
   prerequisiteCourses: Array<object>;
+  knowledgeAreasWithTopics: Array<object>;
   levels: Array<string>;
 }>();
 
@@ -60,7 +62,9 @@ nodes.push(
   ...props.courses.map((course) => ({
     id: course.id,
     label: `<b>${course.number}</b>`,
-    title: `${course.title}`,
+    title: `Course
+      Number: ${course.number}
+      Title: ${course.title}`,
     color: '#fca5a5',
     mass: 4,
     font: { multi: true, bold: 20, size: 20 },
@@ -72,11 +76,25 @@ nodes.push(
 nodes.push(
   ...props.topics.map((topic) => ({
     id: topic.id,
-    label: `${topic.name.substring(0, 20)}${topic.name.length > 20 ? '...' : ''}`,
-    title: topic.name,
+    label: truncateText(topic.name),
+    title: `Topic\nName: ${topic.name}`,
     font: { size: 16 },
     widthConstraint: { minimum: 60, maximum: 70 },
     heightConstraint: { minimum: 60, maximum: 70 },
+  })),
+);
+
+nodes.push(
+  ...props.knowledgeAreas.map((knowledgeArea) => ({
+    id: knowledgeArea.id,
+    label: truncateText(knowledgeArea.title),
+    title: `Knowledge Area
+      Title: ${knowledgeArea.title}
+      Description: ${knowledgeArea.description}`,
+    color: '#c4b5fd',
+    font: { size: 16 },
+    widthConstraint: { minimum: 90, maximum: 100 },
+    heightConstraint: { minimum: 90, maximum: 100 },
   })),
 );
 
@@ -89,12 +107,27 @@ edges.push(
     from: courseData.Course.id,
     to: courseData.Topic.id,
     label: `teaches`,
-    title: `Level: ${courseData.TEACHES.level}
+    title: `Teaches
+      Level: ${courseData.TEACHES.level}
       Tools: ${courseData.TEACHES.tools ?? ''}
       Comments: ${courseData.TEACHES.comments ?? ''}`,
-    value: props.levels.indexOf(courseData.TEACHES.level) + 1,
-    smooth: false,
+    value: props.levels.indexOf(courseData.TEACHES.level),
+    // smooth: false,
     length: 300,
+  })),
+);
+
+edges.push(
+  ...props.knowledgeAreasWithTopics.map((item) => ({
+    from: item.Topic.id,
+    to: item.KnowledgeArea.id,
+    label: `covers`,
+    title: `Covers
+      Level: ${item.COVERS.level}
+      Tools: ${item.COVERS.tools ?? ''}
+      Comments: ${item.COVERS.comments ?? ''}`,
+    value: props.levels.indexOf(item.COVERS.level),
+    length: 500,
   })),
 );
 
@@ -111,7 +144,9 @@ edges.push(
     from: prereqDataItem.Course_from.id,
     to: prereqDataItem.Course_to.id,
     label: `is a prerequisite of`,
+    // color: 'gray',
     length: 500,
+    // dashes: true
   })),
 );
 
@@ -134,6 +169,16 @@ function toggleCourseVisibility(courseId: string, setVisibilityTo = null) {
 
   let nodeUpdates = [{ id: courseId, hidden: shouldHideCourse }];
 
+  // hideRelatedTopics(nodeUpdates, courseId, shouldHideCourse);
+
+  nodes.update(nodeUpdates);
+}
+
+function hideRelatedTopics(
+  nodeUpdates: { hidden: boolean; id: string }[],
+  courseId: string,
+  shouldHideCourse: boolean,
+) {
   nodeUpdates.push(
     ...props.coursesWithTopics
       .filter((item) => {
@@ -151,8 +196,6 @@ function toggleCourseVisibility(courseId: string, setVisibilityTo = null) {
       })
       .map((item) => ({ id: item.Topic.id, hidden: shouldHideCourse })),
   );
-
-  nodes.update(nodeUpdates);
 }
 
 function isTopicAttachedToMultipleVisibleCourses(topicId): boolean {
@@ -174,6 +217,10 @@ function isTopicAttachedToMultipleVisibleCourses(topicId): boolean {
   );
 }
 
+function truncateText(text: string, maxLength: Number = 20): string {
+  return `${text.substring(0, 20)}${text.length > maxLength ? '...' : ''}`;
+}
+
 const data = {
   nodes: nodes,
   edges: edges,
@@ -181,11 +228,12 @@ const data = {
 const options = {
   edges: {
     arrows: 'to',
-    color: 'gray',
+    // color: 'gray',
     arrowStrikethrough: false,
     scaling: {
       min: 1,
-      max: 6,
+      max: 4,
+      label: false
     },
     font: { align: 'top', vadjust: -1 },
   },
@@ -207,8 +255,9 @@ onMounted(() => {
   <div
     class="base-card w-full space-y-2 px-4 py-4 text-sm md:w-11/12 md:text-base xl:px-10"
   >
-    <p class="form-title text-center">Topics</p>
+<!--    <p class="form-title text-center">Topics</p>-->
     <div class="flex flex-wrap gap-x-5 gap-y-3 rounded-lg border p-3">
+      <span class="font-semibold tracking-wide">Courses:</span>
       <PillDiv
         ><input
           v-model="selectAll"
