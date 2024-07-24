@@ -3,12 +3,14 @@ import { Head } from '@inertiajs/vue3';
 import { onMounted, ref, watch } from 'vue';
 import { DataSet, Network } from 'vis-network/standalone';
 import PillDiv from '@/Components/PillDiv.vue';
+import map from 'lodash/map';
 
 const props = defineProps<{
   courses: Array<object>;
   topics: Array<object>;
   coursesWithTopics: Array<object>;
-  coverageLevels: Array<string>;
+  prerequisiteCourses: Array<object>;
+  levels: Array<string>;
 }>();
 
 const allCourses: Array<Number> = props.courses.map((course) => course.number);
@@ -58,6 +60,7 @@ nodes.push(
   ...props.courses.map((course) => ({
     id: course.id,
     label: `<b>${course.number}</b>`,
+    title: `${course.title}`,
     color: '#fca5a5',
     mass: 4,
     font: { multi: true, bold: 20, size: 20 },
@@ -83,10 +86,32 @@ let edges = [];
 
 edges.push(
   ...props.coursesWithTopics.map((courseData) => ({
-    from: courseData.course.id,
-    to: courseData.topic.id,
-    label: `${courseData.covers.coverage_level}`,
-    value: props.coverageLevels.indexOf(courseData.covers.coverage_level) + 1,
+    from: courseData.Course.id,
+    to: courseData.Topic.id,
+    label: `teaches`,
+    title: `Level: ${courseData.TEACHES.level}
+      Tools: ${courseData.TEACHES.tools ?? ''}
+      Comments: ${courseData.TEACHES.comments ?? ''}`,
+    value: props.levels.indexOf(courseData.TEACHES.level) + 1,
+    smooth: false,
+    length: 300,
+  })),
+);
+
+const courseNumbers = map(props.courses, 'number');
+
+const prereqData = props.prerequisiteCourses.filter(
+  (item) =>
+    courseNumbers.includes(item.Course_from.number) &&
+    courseNumbers.includes(item.Course_to.number),
+);
+
+edges.push(
+  ...prereqData.map((prereqDataItem) => ({
+    from: prereqDataItem.Course_from.id,
+    to: prereqDataItem.Course_to.id,
+    label: `is a prerequisite of`,
+    length: 500,
   })),
 );
 
@@ -116,15 +141,15 @@ function toggleCourseVisibility(courseId: string, setVisibilityTo = null) {
           selectedCourses.value.length === 0 ||
           selectedCourses.value.length === props.courses.length
         ) {
-          return item.course.id === courseId;
+          return item.Course.id === courseId;
         }
 
         return (
-          item.course.id === courseId &&
-          !isTopicAttachedToMultipleVisibleCourses(item.topic.id)
+          item.Course.id === courseId &&
+          !isTopicAttachedToMultipleVisibleCourses(item.Topic.id)
         );
       })
-      .map((item) => ({ id: item.topic.id, hidden: shouldHideCourse })),
+      .map((item) => ({ id: item.Topic.id, hidden: shouldHideCourse })),
   );
 
   nodes.update(nodeUpdates);
@@ -132,8 +157,8 @@ function toggleCourseVisibility(courseId: string, setVisibilityTo = null) {
 
 function isTopicAttachedToMultipleVisibleCourses(topicId): boolean {
   let courseIdsTopicIsAttachedTo: string[] = props.coursesWithTopics
-    .filter((item) => item.topic.id === topicId)
-    .map((item) => item.course.id);
+    .filter((item) => item.Topic.id === topicId)
+    .map((item) => item.Course.id);
 
   if (courseIdsTopicIsAttachedTo.length < 2) return false;
 
@@ -157,9 +182,7 @@ const options = {
   edges: {
     arrows: 'to',
     color: 'gray',
-    length: 300,
     arrowStrikethrough: false,
-    smooth: false,
     scaling: {
       min: 1,
       max: 6,

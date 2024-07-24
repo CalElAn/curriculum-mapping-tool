@@ -58,18 +58,26 @@ abstract class Relationship extends GraphModel
         $toNodeLabel = static::getToNodeLabel();
         $relationshipLabel = static::$label;
 
+        if ($fromNodeLabel === $toNodeLabel) {
+            $fromNodeVar = "{$fromNodeLabel}_from";
+            $toNodeVar = "{$toNodeLabel}_to";
+        } else {
+            $fromNodeVar = $fromNodeLabel;
+            $toNodeVar = $toNodeLabel;
+        }
+
         $results = static::client()->run(
             <<<CYPHER
-            MATCH ($fromNodeLabel:$fromNodeLabel)-[$relationshipLabel:$relationshipLabel]->($toNodeLabel:$toNodeLabel)
-            RETURN $fromNodeLabel, $relationshipLabel, $toNodeLabel
+            MATCH ($fromNodeVar:$fromNodeLabel)-[$relationshipLabel:$relationshipLabel]->($toNodeVar:$toNodeLabel)
+            RETURN $fromNodeVar, $relationshipLabel, $toNodeVar
             CYPHER
             ,
         );
 
         return static::buildCollectionFromResults($results, [
-            $fromNodeLabel => $fromNodeLabel,
+            $fromNodeVar => $fromNodeVar,
             $relationshipLabel => $relationshipLabel,
-            $toNodeLabel => $toNodeLabel,
+            $toNodeVar => $toNodeVar,
         ]);
     }
 

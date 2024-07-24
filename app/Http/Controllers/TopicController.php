@@ -6,6 +6,7 @@ use App\Enums\RelationshipLevels;
 use App\GraphModels\Covers;
 use App\GraphModels\GraphModel;
 use App\GraphModels\Course;
+use App\GraphModels\IsPrerequisiteOf;
 use App\GraphModels\KnowledgeArea;
 use App\GraphModels\Teaches;
 use App\GraphModels\Topic;
@@ -45,14 +46,15 @@ class TopicController extends Controller
 
     public function visualization(): Response
     {
-        $coursesWithTopics = Course::getAllWithTopics();
+        $coursesWithTopics = Teaches::allWithNodes();
 
         return Inertia::render('Topic/Visualization', [
             'courses' => GraphModel::getUniqueResults(
-                array_column($coursesWithTopics->toArray(), 'course'),
+                array_column($coursesWithTopics->toArray(), 'Course'),
             ),
             'topics' => Topic::all('name'),
             'coursesWithTopics' => $coursesWithTopics,
+            'prerequisiteCourses' => IsPrerequisiteOf::allWithNodes(),
             'levels' => RelationshipLevels::cases(),
         ]);
     }
@@ -62,8 +64,10 @@ class TopicController extends Controller
         return Topic::getRelatedNodes($topicId, new Teaches(), 'number');
     }
 
-    public function getKnowledgeAreas(Request $request, string $topicId): Collection
-    {
+    public function getKnowledgeAreas(
+        Request $request,
+        string $topicId,
+    ): Collection {
         return Topic::getRelatedNodes($topicId, new Covers(), 'title');
     }
 
