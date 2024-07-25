@@ -1,13 +1,14 @@
 <template>
   <SubformWrapper @submit.prevent="store()" :adding="adding" class="">
     <input
-      readonly
+      :readonly="!editing && !adding"
       type="text"
+      placeholder="number"
       class="input col-span-full w-full"
       v-model="form.number"
     />
     <textarea
-      readonly
+      :readonly="!editing && !adding"
       rows="2"
       placeholder="name"
       required
@@ -17,14 +18,20 @@
     ></textarea>
     <FormValidationErrors class="sm:col-span-full" :errors="form.errors" />
     <div class="flex justify-end sm:col-span-full sm:mr-4">
-      <SubformButton
-        iconType="view"
-        :shouldRotateIcon="viewing"
-        @click="viewing = !viewing"
+      <AllSubformButtons
         class=""
-      >
-        {{ viewing ? '' : `Relationships` }}
-      </SubformButton>
+        @cancelAdd="$emit('cancelAdd')"
+        @save="update()"
+        @delete="destroy()"
+        @cancelEditing="editing = false"
+        @edit="editing = true"
+        @toggleViewing="viewing = !viewing"
+        :adding="adding"
+        :editing="editing"
+        :viewing="viewing"
+        :viewingText="`Relationships`"
+        :form="form"
+      />
     </div>
     <template v-if="viewing && id" #viewingContainer>
       <div class="viewing-subform-container">
@@ -65,6 +72,7 @@ import { handleViewing, useFormHelpers } from '@/Helpers/formHelpers';
 import AddButton from '@/Components/AddButton.vue';
 import SubformButton from '@/Components/SubformButton.vue';
 import VueElementLoading from '@/Components/VueElementLoading.vue';
+import AllSubformButtons from '@/Components/AllSubformButtons.vue';
 
 const props = defineProps<{
   course: Object;

@@ -7,10 +7,10 @@
     <p class="form-title mt-2 text-center">Topics</p>
     <div class="mt-6">
       <div
-        class="mb-2 mt-8 flex flex-col items-center justify-between gap-y-3 sm:flex-row md:mt-8"
+        class="mb-2 mt-8 flex flex-col items-center justify-between gap-y-3 lg:flex-row md:mt-8"
       >
         <div
-          class="flex w-full justify-center gap-1 sm:w-3/5 sm:flex-row sm:items-center xl:gap-4 xl:text-base"
+          class="flex w-full justify-center gap-1 lg:w-3/5 sm:flex-row sm:items-center xl:gap-4 xl:text-base"
         >
           <MagnifyingGlassIcon class="hidden h-5 w-5 text-gray-500 sm:block" />
           <input

@@ -11,6 +11,7 @@
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.9",
         "laudis/neo4j-php-client": "^3.1",
+        "spatie/laravel-permission": "^6.9",
         "tightenco/ziggy": "^2.0",
         "wikibase-solutions/php-cypher-dsl": "^6.0"
     },

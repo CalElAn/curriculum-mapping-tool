@@ -52,7 +52,7 @@ class CourseController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $id = Course::create([
-            'code' => $request->code,
+            'number' => $request->number,
             'title' => $request->title,
         ]);
 
@@ -62,7 +62,7 @@ class CourseController extends Controller
     public function update(Request $request, string $id): RedirectResponse
     {
         Course::update($id, [
-            'code' => $request->code,
+            'number' => $request->number,
             'title' => $request->title,
         ]);
 

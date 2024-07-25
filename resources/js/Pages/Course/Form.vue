@@ -6,9 +6,9 @@
   >
     <p class="form-title mt-2 text-center">Courses</p>
     <div class="mt-6">
-      <div class="mb-2 mt-8 flex items-center justify-between md:mt-8">
+      <div class="mb-2 mt-8 flex flex-col items-center justify-between gap-y-3 lg:flex-row md:mt-8">
         <div
-          class="xsm:w-4/5 flex w-full flex-row items-center justify-center gap-1 xl:gap-4 xl:text-base"
+          class="flex w-full flex-row items-center justify-center gap-1 lg:w-3/5 xl:gap-4 xl:text-base"
         >
           <MagnifyingGlassIcon
             class="h-4 w-4 text-gray-500 sm:block sm:h-5 sm:w-5"
@@ -21,9 +21,13 @@
             autofocus
           />
         </div>
-        <!--        <AddButton @click="add()" :disabled="!shouldAllowAdd" class="mr-4 font-semibold">
+        <AddButton
+          @click="add()"
+          :disabled="!shouldAllowAdd"
+          class="mr-4 font-semibold"
+        >
           Add a course
-        </AddButton>-->
+        </AddButton>
       </div>
       <div class="mt-3 flex flex-col text-sm md:text-base">
         <TransitionGroup name="list">

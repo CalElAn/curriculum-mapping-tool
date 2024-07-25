@@ -123,7 +123,7 @@ import TabLink from '@/Components/TabLink.vue';
             class="me-2 h-8 w-8 rounded-full bg-gray-200"
             alt="user photo"
           ></div>
-          Bonnie Green
+            {{ $page.props.auth.user.name }}
           <svg
             class="ms-3 h-2.5 w-2.5"
             aria-hidden="true"
