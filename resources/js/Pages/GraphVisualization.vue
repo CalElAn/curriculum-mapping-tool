@@ -261,6 +261,7 @@ const options = {
   },
   nodes: {
     shape: 'circle',
+    borderWidth: 1.5
   },
 };
 

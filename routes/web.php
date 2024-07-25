@@ -3,6 +3,7 @@
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\CoversController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\GraphVisualizationController;
 use App\Http\Controllers\KnowledgeAreaController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TeachesController;
@@ -20,7 +21,7 @@ Route::post('/topics/form', [TopicController::class, 'store'])->name('topics.sto
 Route::patch('/topics/form/{id}', [TopicController::class, 'update'])->name('topics.update');
 Route::delete('/topics/form/{id}', [TopicController::class, 'destroy'])->name('topics.destroy');
 
-Route::get('/visualization/topics', [TopicController::class, 'visualization'])->name('topics.visualization');
+Route::get('/graph-visualization', GraphVisualizationController::class)->name('graph_visualization');
 
 Route::get('/data-entry/courses/form', [CourseController::class, 'form'])->name('courses.form');
 Route::get('/courses/form/{courseId}/get-topics', [CourseController::class, 'getTopics'])->name('courses.get_topics');
@@ -33,7 +34,6 @@ Route::get('/knowledge-areas/form/{knowledgeAreaId}/get-topics', [KnowledgeAreaC
 Route::post('/knowledge-areas/form', [KnowledgeAreaController::class, 'store'])->name('knowledge_areas.store');
 Route::patch('/knowledge-areas/form/{id}', [KnowledgeAreaController::class, 'update'])->name('knowledge_areas.update');
 Route::delete('/knowledge-areas/form/{id}', [KnowledgeAreaController::class, 'destroy'])->name('knowledge_areas.destroy');
-
 
 Route::post('/teaches/form', [TeachesController::class, 'store'])->name('teaches.store');
 Route::patch('/teaches/form/{id}', [TeachesController::class, 'update'])->name('teaches.update');
