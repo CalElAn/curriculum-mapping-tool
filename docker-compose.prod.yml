@@ -72,7 +72,7 @@ services:
         volumes:
             - .:/var/www/html
         working_dir: /var/www/html
-        user: 'www-data'
+        user: 'node'
         entrypoint: ['npm']
 
 networks:

@@ -73,7 +73,7 @@ class TopicController extends Controller
             ],
         ])->validate();
 
-        $id = Topic::create(['name' => $request->name]);
+        $id = Topic::create($request->validate(['name' => 'required']));
 
         return back()->with('data', ['id' => $id]);
     }
@@ -100,7 +100,7 @@ class TopicController extends Controller
             ],
         ])->validate();
 
-        Topic::update($id, ['name' => $request->name]);
+        Topic::update($id, $request->validate(['name' => 'required']));
 
         return back();
     }

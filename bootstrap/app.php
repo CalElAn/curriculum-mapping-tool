@@ -37,7 +37,7 @@ return Application::configure(basePath: dirname(__DIR__))
         ) {
             /* adapted from https://inertiajs.com/error-handling
                 This works without throwing this error: "All Inertia requests must receive a valid Inertia response,
-                however a plain JSON response was received." because of a check in app.ts that prevents the default event behaviour
+                however a plain JSON response was received." because of a check in "app.ts" that prevents the default event behaviour
                 */
             if ($response->getStatusCode() === 403 && $request->inertia()) {
                 return response()->json(
